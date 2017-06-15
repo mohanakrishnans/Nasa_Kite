@@ -1,4 +1,4 @@
-# World Wind Explorer
+# Nasa World Wind 
 An HTML5/JavaScript geo-browser built from the NASA WebWorldWind SDK using the Knockout and Bootstrap libraries.
 
 ### Objectives
