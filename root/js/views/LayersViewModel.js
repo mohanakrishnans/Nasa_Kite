@@ -77,11 +77,43 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                     $("#opacity-slider").slider("option", "value", layer.opacity());
                     $("#layer-settings-dialog").dialog("open");
                 };
-                
-                
+                /**
+                *Meta Data 
+                *
+                */
+
+                self.metaData = function(layer) {
+                    
+                    $("#dialog").dialog({
+                      autoOpen: false,
+                      show: {
+                        effect: "blind",
+                        duration: 700
+                      },
+                      hide: {
+                        effect: "explode",
+                        duration: 500
+                      },
+                      title: layer.name(),
+                      open: function ( ) {
+                        $(this).html("Layer Name: "+layer.name()+
+                                     "<br>Layer Opacity: "+layer.opacity()+
+                                     "<br>Layer Category: "+layer.category()+
+                                     "<br>Layer Enabled: "+layer.enabled()+
+                                     "<br>Layer Url: "+(layer.legendUrl ? layer.legendUrl.url : ''));                         
+                      }
+                    });
+                 
+                     
+                      $( "#dialog" ).dialog( "open" );
+                     
+                    
+                  };
+                                
                 /**
                  * Opens the Add Layer dialog.
                  */
+
                 self.onAddLayer = function() {
                     $("#add-layer-dialog").dialog({
                         autoOpen: false,

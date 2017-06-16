@@ -554,13 +554,14 @@ This script renders the individual layer view model items in the Layers panel.
                         'aria-expanded': $data.enabled() ? 'true' : 'false'},click: $root.onEditSettings">
             <span class="glyphicon glyphicon-plus"></span>
         </button>
+
         <!--Settings button-->
-        <!--<button type="button"
+         <button type="button"
                 class="btn btn-default"
-                style="display: block; width: 15%;"
-                data-bind="css: {active: $data.enabled()}, click: $root.onEditSettings">
+                style="display: none;"
+                data-bind="css: {active: $data.enabled()}, click: $root.metaData">
             <span class="glyphicon glyphicon-cog"></span>
-        </button>-->
+        </button> 
     </div>
     <div class="collapse" data-bind="attr: {id: 'collapse-layer-' + $data.id()}">
         <div class="well">
@@ -568,10 +569,29 @@ This script renders the individual layer view model items in the Layers panel.
             <div>
                 <img data-bind="attr: {src: legendUrl}"/>
             </div>
+            <div>
+                <button type="button" 
+                        class="toggle btn btn-default" 
+                        name="Meta Data" 
+                        data-bind="css: {active: $data.enabled()},click: $root.metaData">Meta Data</button> 
+
+            </div>
         </div>
     </div>
 
 </script>
+<!--
+**MetaData Item Template 
+This script  renders the individual detail of the layer
+-->
+<div id="dialog" title="Basic dialog" style="display: none;">
+    <div class="content"> 
+    </div>
+</div>
+
+
+
+
 
 <!--
 Marker Item Template

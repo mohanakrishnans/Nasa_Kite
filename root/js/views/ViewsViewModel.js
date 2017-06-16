@@ -24,6 +24,40 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                     layer.enabled(!layer.enabled());
                     globe.redraw();
                 };
+                /**
+                *Meta Data 
+                *
+                */
+
+                self.metaData = function(layer) {
+                 
+                 $("#dialog").dialog({
+                      autoOpen: false,
+                      show: {
+                        effect: "blind",
+                        duration: 700
+                      },
+                      hide: {
+                        effect: "explode",
+                        duration: 500
+                      },
+                      title: layer.name(),
+                      open: function ( ) {
+                        $(this).html("Layer Name: "+layer.name()+
+                                     "<br>Layer Opacity: "+layer.opacity()+
+                                     "<br>Layer Category: "+layer.category()+
+                                     "<br>Layer Enabled: "+layer.enabled()+
+                                     "<br>Layer Url: "+(layer.legendUrl ? layer.legendUrl.url : ''));                         
+                        }
+                    });
+                 
+                     $( "#dialog" ).dialog( "open" );
+                     
+                    
+                  } ;
+                  /*
+                  *
+                  */
 				self.onEditSettings = function (layer) {
                     
                     $('#opacity-slider').slider({
