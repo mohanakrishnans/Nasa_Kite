@@ -20,9 +20,24 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                 // Create view data sources from the LayerManager's observable array
                 self.effectsLayers = layerManager.effectsLayers;
                 self.widgetLayers = layerManager.widgetLayers;
-				self.onToggleLayer = function (layer) {
+				        self.onToggleLayer = function (layer) {
                     layer.enabled(!layer.enabled());
                     globe.redraw();
+                };
+                /*
+                *  Opacity Slider 
+                */
+                self.chag = function(data, event, layer) {
+
+                    var layerName = event.target.id;
+                    var layers = globe.wwd.layers,
+                        i, len;
+                    for (i = 0, len = layers.length; i < len; i++) {
+                        if (layers[i].displayName === layerName) {
+                            layers[i].opacity = data.value;
+                            globe.redraw();
+                        }
+                    }
                 };
                 /**
                 *Meta Data 
@@ -58,6 +73,8 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                   /*
                   *
                   */
+                  
+
 				self.onEditSettings = function (layer) {
                     
                     $('#opacity-slider').slider({
