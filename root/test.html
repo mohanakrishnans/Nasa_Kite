@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
+    <!-- Bootstrap: The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="toggle.js"></script>
+    <!-- Function for getting Slider Value -->
+   
+    <!-- End of Function -->
+    <title>Springfield Data Viewer</title>
+
+    <meta name="description" content="Springfield Data">
+    <meta name="author" content="Anjesh">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpg" href="css/images/Springfield_logo.jpg"/>
+
+    <!-- JQuery UI provides some UI elements (e.g, a slider) -->
+    <link rel="stylesheet" type="text/css" href="css/libs/jquery-ui/v1.11.4/jquery-ui.min.css"/>
+    <!-- Bootstrap's 'Slate' theme provides the main styling -->
+    <link rel="stylesheet" type="text/css" href="css/libs/bootstrap/v3.3.6/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/libs/bootstrap/v3.3.6/bootstrap-slate.min.css"/>
+    <!-- JQuery-Growl plugin for growl style messages-->
+
+    <link rel="stylesheet" type="text/css" href="css/libs/jquery-plugins/jquery.growl.css"/>
+    <!-- Font Awesome provides icons -->
+    <link rel="stylesheet" type="text/css" href="css/libs/fa/v4.6.2/font-awesome.min.css"/>
+    <!-- Custom application specific styling -->
+    <link rel="stylesheet" type="text/css" href="css/override.css"/>
+    <link rel="stylesheet" type="text/css" href="styles.css"/>
+  <style>
+  ul { list-style-type: none; margin: 0; padding: 0; margin-bottom: 10px; }
+  li { margin: 5px; padding: 5px; width: 150px; }
+  </style>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#sortable" ).sortable({
+      revert: true
+    });
+    $( "#draggable" ).draggable({
+      connectToSortable: "#sortable",
+      helper: "clone",
+      revert: "invalid"
+    });
+    $( "ul, li" ).disableSelection();
+  } );
+  </script>
+</head>
+<body>
+ 
+<!-- <ul id="sortable">
+  <li class="ui-state-default">Item 1</li>
+  <li class="ui-state-default">Item 2</li>
+  <li class="ui-state-default">Item 3</li>
+  <li class="ui-state-default">Item 4</li>
+  <li class="ui-state-default">Item 5</li>
+</ul> -->
+<ul id="sortable">
+<li><button class="btn btn-primary" value="Btn1" onclick="console.log('Button1')">Btn1</button>
+<li><button class="btn btn-primary" value="Btn2" onclick="console.log('Button2')">Btn2</button>
+<li><button class="btn btn-primary" value="Btn3" onclick="console.log('Button3')">Btn3</button>
+ </ul>
+ 
+</body>
+</html>
