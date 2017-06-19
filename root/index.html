@@ -24,7 +24,7 @@
     <!-- Bootstrap's 'Slate' theme provides the main styling -->
     <link rel="stylesheet" type="text/css" href="css/libs/bootstrap/v3.3.6/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/libs/bootstrap/v3.3.6/bootstrap-slate.min.css"/>
-    <!-- JQuery-Growl plugin for growl style messages-->
+    <!-- JQuery-Growl plugin for growl style messages-->   
 
     <link rel="stylesheet" type="text/css" href="css/libs/jquery-plugins/jquery.growl.css"/>
     <!-- Font Awesome provides icons -->
@@ -224,6 +224,7 @@ Main Content
                             </a>
                         </h5>
                     </div>
+
                     <div class="panel-collapse collapse in" id="overlay-layers-panel">
                         <div data-bind="template: { name: 'layer-template', foreach: overlayLayers}"></div>
                     </div>
@@ -303,6 +304,7 @@ Main Content
                  ko template: { name: 'server-template', foreach: servers }
                  /ko
             </div>
+            -->
 
             <!--
             Add Layer Dialog
@@ -508,12 +510,7 @@ Main Content
 <!--
 Layer Settings Dialog
 -->
-<div style="display: none">
-    <div id="layer-settings-dialog">
-        Opacity
-        <div id="opacity-slider" auto-focus></div>
-    </div>
-</div>
+
 
 <!--
 Marker Editor Dialog
@@ -524,15 +521,13 @@ Marker Editor Dialog
         <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all"
                data-bind="value: marker().name">
     </div>
-</div>
-
-
+</div> 
 <!--
 Layer Template
 This script renders the individual layer view model items in the Layers panel.
 -->
 <script type="text/html" id="layer-template">
-    <div class="btn-group btn-block">
+    <div class="btn-group btn-block"> 
         <!--Layer name and visibility button-->
         <button type="button"
                 class="btn btn-default layer-name wrap-panel-heading"
@@ -551,16 +546,17 @@ This script renders the individual layer view model items in the Layers panel.
                             attr: {
                         'data-target': '#collapse-layer-' + $data.id(),
                         'aria-controls': 'collapse-layer-' + $data.id(),
-                        'aria-expanded': $data.enabled() ? 'true' : 'false'},click: $root.onEditSettings">
+                        'aria-expanded': $data.enabled() ? 'true' : 'false'}">
             <span class="glyphicon glyphicon-plus"></span>
         </button>
+
         <!--Settings button-->
-        <!--<button type="button"
+         <button type="button"
                 class="btn btn-default"
-                style="display: block; width: 15%;"
-                data-bind="css: {active: $data.enabled()}, click: $root.onEditSettings">
+                style="display: none;"
+                data-bind="css: {active: $data.enabled()}, click: $root.metaData">
             <span class="glyphicon glyphicon-cog"></span>
-        </button>-->
+        </button> 
     </div>
     <div class="collapse" data-bind="attr: {id: 'collapse-layer-' + $data.id()}">
         <div class="well">
@@ -568,10 +564,33 @@ This script renders the individual layer view model items in the Layers panel.
             <div>
                 <img data-bind="attr: {src: legendUrl}"/>
             </div>
+            <div>
+                <input class="layer" data-bind="attr: {id: ''+$data.name(), min: 0, max: 1, step: 0.2},css: {active: $data.enabled()}, value: $data.value, event:{change: $root.chag}, text: $data.name()" type="range">
+            </div>
+            <div>             
+                <button type="button" 
+                        class="toggle btn btn-default" 
+                        name="Meta Data" 
+                        data-bind="css: {active: $data.enabled()},click: $root.metaData">Meta Data
+                </button>
+            </div>
         </div>
-    </div>
+        </div>
+  
 
 </script>
+<!--
+**MetaData Item Template 
+This script  renders the individual detail of the layer
+-->
+<div id="dialog" title="Basic dialog" style="display: none;">
+    <div class="content"> 
+    </div>
+</div>
+
+
+
+
 
 <!--
 Marker Item Template
@@ -664,6 +683,7 @@ This server-template script renders a server's tab content
     $(document).on('click','.toggle', function(){
         $(this).find('span').toggleClass('glyphicon-plus glyphicon-minus');
     });
+
 
     //to Hide left side bar on window load
     window.onload = function() {
