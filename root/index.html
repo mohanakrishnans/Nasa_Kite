@@ -24,7 +24,7 @@
     <!-- Bootstrap's 'Slate' theme provides the main styling -->
     <link rel="stylesheet" type="text/css" href="css/libs/bootstrap/v3.3.6/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/libs/bootstrap/v3.3.6/bootstrap-slate.min.css"/>
-    <!-- JQuery-Growl plugin for growl style messages-->   
+    <!-- JQuery-Growl plugin for growl style messages-->
 
     <link rel="stylesheet" type="text/css" href="css/libs/jquery-plugins/jquery.growl.css"/>
     <!-- Font Awesome provides icons -->
@@ -32,6 +32,7 @@
     <!-- Custom application specific styling -->
     <link rel="stylesheet" type="text/css" href="css/override.css"/>
     <link rel="stylesheet" type="text/css" href="styles.css"/>
+    <script src="https://unpkg.com/split.js/split.min.js"></script>
 </head>
 <body>
 <!--
@@ -60,7 +61,7 @@ Main Menu NavBar
             <ul class="nav navbar-nav">
                 <!-- Home navigation button -->
                 <li class="active left-sidebar-btn">
-                    <a href="#home" role="tab" data-toggle="tab" onclick="showMe()">
+                    <a href="#home" role="tab" data-toggle="tab">
                                 <span class="glyphicon glyphicon-home visible-sm-block" aria-hidden="true"
                                       style="padding-top:4px; padding-bottom:4px"></span>
                         <span class="hidden-sm" aria-hidden="true">Source</span>
@@ -68,14 +69,14 @@ Main Menu NavBar
                 </li>
                 <!-- Layers navigation button -->
                 <li class="left-sidebar-btn">
-                    <a href="#layers" id= "asam" role="tab" data-toggle="tab" onclick="showMe()">
+                    <a href="#layers" id= "asam" role="tab" data-toggle="tab">
                                 <span class="glyphicon glyphicon-list visible-sm-block" aria-hidden="true"
                                       style="padding-top:4px; padding-bottom:4px"></span>
                         <span class="hidden-sm" aria-hidden="true">Layers</span>
                     </a>
                 </li>
 				<li class="left-sidebar-btn">
-                    <a href="#views" role="tab" data-toggle="tab" onclick="showMe()">
+                    <a href="#views" role="tab" data-toggle="tab">
                                 <span class="glyphicon glyphicon-list visible-sm-block" aria-hidden="true"
                                       style="padding-top:4px; padding-bottom:4px"></span>
                         <span class="hidden-sm" aria-hidden="true">Views</span>
@@ -83,7 +84,7 @@ Main Menu NavBar
                 </li>
                 <!-- Markers navigation button -->
                 <li class="left-sidebar-btn">
-                    <a href="#markers" role="tab" data-toggle="tab" onclick="showMe()">
+                    <a href="#markers" role="tab" data-toggle="tab">
                                 <span class="glyphicon glyphicon-map-marker visible-sm-block" aria-hidden="true"
                                       style="padding-top:4px; padding-bottom:4px"></span>
                         <span class="hidden-sm" aria-hidden="true">Markers</span>
@@ -92,7 +93,7 @@ Main Menu NavBar
                 <!-- Search box and button (bound to SearchViewModel)-->
                 <form id="search" class="navbar-form navbar-left" role="search">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Destination" autocomplete="on" id="searchText"
+                        <input type="text" class="form-control" placeholder="Destination" id="searchText"
                                data-bind="value: searchText, valueUpdate: 'keyup', event: {keypress: onEnter}"/>
                     </div>
                     <button id="searchButton" class="btn btn-primary" type="submit"
@@ -145,7 +146,7 @@ Main Content
         <!--
         Home tab
         -->
-        <div id="home" class="tab-pane active" role="tabpanel" >
+        <div id="home" class="tab-pane active" role="tabpanel">
             <div class="section-heading">
                 <h4 class="sub-header">
                     <span class="glyphicon glyphicon-home" aria-hidden="true" style="padding-right:5px;"></span>
@@ -202,12 +203,42 @@ Main Content
             </div>
             <div id="layers-body" class="section-body collapse in">
                 <!--TODO: This entire section could be driven by an observable array-->
+				<div class="panel panel-default" data-bind="sortable: overlay1Layers">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+						User Spatial Data
+                            <a data-toggle="collapse" class="as" href="#overlay1-layers-panel" aria-expanded="false"
+                               aria-controls="overlay1-layers-panel">
+                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Overlays"></span></small>
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="panel-collapse collapse in" id="overlay1-layers-panel">
+                        <div data-bind="template: { name: 'layer-template', foreach: overlay1Layers}"></div>
+                    </div>
+                </div>
+				<div class="panel panel-default" data-bind="sortable: overlayLayers">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+						Local Spatial Data
+                            <a data-toggle="collapse" class="as" href="#overlay-layers-panel" aria-expanded="false"
+                               aria-controls="overlay-layers-panel">
+                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Overlays"></span></small>
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="panel-collapse collapse in" id="overlay-layers-panel">
+                        <div data-bind="template: { name: 'layer-template', foreach: overlayLayers}"></div>
+                    </div>
+                </div>
+				
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h5 class="panel-title">
-                            <a data-toggle="collapse" href="#base-layers-panel" aria-expanded="false"
+						National Spatial Data
+                            <a data-toggle="collapse" class="as" href="#base-layers-panel" aria-expanded="false"
                                aria-controls="base-layers-panel">
-                                Base Maps
+                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Base Maps"></span></small>
                             </a>
                         </h5>
                     </div>
@@ -215,33 +246,9 @@ Main Content
                         <div data-bind="template: { name: 'layer-template', foreach: baseLayers}"></div>
                     </div>
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5 class="panel-title">
-                            <a data-toggle="collapse" href="#overlay-layers-panel" aria-expanded="false"
-                               aria-controls="overlay-layers-panel">
-                                Overlays
-                            </a>
-                        </h5>
-                    </div>
-
-                    <div class="panel-collapse collapse in" id="overlay-layers-panel">
-                        <div data-bind="template: { name: 'layer-template', foreach: overlayLayers}"></div>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5 class="panel-title">
-                            <a data-toggle="collapse" href="#data-layers-panel" aria-expanded="false"
-                               aria-controls="data-layers-panel">
-                                Datasets
-                            </a>
-                        </h5>
-                    </div>
-                    <div class="panel-collapse collapse" id="data-layers-panel">
-                        <div data-bind="template: { name: 'layer-template', foreach: dataLayers}"></div>
-                    </div>
-                </div>
+                
+                
+			</div>
 				<!--
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -270,7 +277,7 @@ Main Content
                     </div>
                 </div>
 				-->
-            </div>
+            
             <!--
                                     <div>
                                         <button type="button"
@@ -304,7 +311,6 @@ Main Content
                  ko template: { name: 'server-template', foreach: servers }
                  /ko
             </div>
-            -->
 
             <!--
             Add Layer Dialog
@@ -323,34 +329,41 @@ Main Content
 
         <!--
         Markers View (bound to MarkersViewModel)
+		<div class="panel panel-default">
+        <div class="panel-heading" role="tab"
+             data-bind=" attr: {id: 'server-panel-' + $index}">
+            <h5 class="panel-title">
+                <span aria-expanded="true" data-bind="text:$data.title"></span>
+				<a href="#">
+                    <small><span class="pull-right glyphicon glyphicon-remove clickable_space"></span></small>
+                </a>
         -->
         <div id="views" class="tab-pane" role="tabpanel">
             <div class="section-heading">
                 <h4 class="sub-header">
-                            <span class="glyphicon glyphicon-map-marker" aria-hidden="true"
+                            <span class="glyphicon glyphicon-adjust" aria-hidden="true"
                                   style="padding-right:5px;"></span>
                     View and Controls
                     <a class="section-toggle" data-toggle="collapse" href="#views-body"></a>
                 </h4>
-                <div class="panel panel-default">
+				<div class="panel panel-default">
                     <div class="panel-heading">
                         <h5 class="panel-title">
-                        <a id="tog" class="btn btn-default">
+                        <a id="tog" class="btn btn-default" style="display: block; width: 100%;">
                                 <i class="glyphicon glyphicon-eye-open"></i>
-                                <span>Logo</span>
+                                <span>Logos</span>
                                 
                         </a>
                         </h5>
-                    </div>
-                    <div class="panel-collapse collapse in" id="effect-layers-panel">                       
                     </div>
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h5 class="panel-title">
-                            <a data-toggle="collapse in" href="#effect-layers-panel" aria-expanded="false"
+						Effects
+                            <a class="as" data-toggle="collapse" href="#effect-layers-panel" aria-expanded="false"
                                aria-controls="effect-layers-panel">
-                                Effects
+                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Effects"></span></small>
                             </a>
                         </h5>
                     </div>
@@ -361,30 +374,51 @@ Main Content
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h5 class="panel-title">
-                            <a data-toggle="collapse" href="#widget-layers-panel" aria-expanded="false"
+						Widgets
+                            <a data-toggle="collapse" class="as" href="#widget-layers-panel" aria-expanded="false"
                                aria-controls="widget-layers-panel">
-                                Widgets
+                               <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Widgets"></span></small> 
                             </a>
                         </h5>
                     </div>
-                    <div class="panel-collapse collapse" id="widget-layers-panel">
+                    <div class="panel-collapse collapse in" id="widget-layers-panel">
                         <div data-bind="template: { name: 'layer-template', foreach: widgetLayers}"></div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+
 		<div id="markers" class="tab-pane" role="tabpanel">
-            <div class="section-heading">
+        <div class="markersplit1 section-heading">
                 <h4 class="sub-header">
                             <span class="glyphicon glyphicon-map-marker" aria-hidden="true"
                                   style="padding-right:5px;"></span>
-                    Markers
+                    Markers Controls
                     <a class="section-toggle" data-toggle="collapse" href="#markers-body"></a>
                 </h4>
             </div>
             <div id="markers-body" class="section-body collapse in">
                 <!-- Bind the list to the 'markers' observableArray -->
                 <div data-bind="template: { name: 'marker-template', foreach: markers}"></div>
+            </div>
+        
+             <div class="gutter gutter-vertical" style="width: 10px;"></div>
+            <br>
+            <div class="markersplit2 panel panel-default">
+                <br><div class="panel-heading">
+                    <h5 class="panel-title">
+                    Markers
+                        <a data-toggle="collapse" class="as" href="#data-layers-panel" aria-expanded="false"
+                           aria-controls="data-layers-panel">
+                            <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Datasets"></span></small> 
+                        </a>
+                    </h5>
+                </div>
+                <div class="panel-collapse collapse in" id="data-layers-panel">
+                    <div data-bind="template: { name: 'layer-template', foreach: dataLayers}"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -510,7 +544,12 @@ Main Content
 <!--
 Layer Settings Dialog
 -->
-
+<div style="display: none">
+    <div id="layer-settings-dialog">
+        Opacity
+        <div id="opacity-slider" auto-focus></div>
+    </div>
+</div>
 
 <!--
 Marker Editor Dialog
@@ -521,26 +560,29 @@ Marker Editor Dialog
         <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all"
                data-bind="value: marker().name">
     </div>
-</div> 
+</div>
+
+
 <!--
 Layer Template
 This script renders the individual layer view model items in the Layers panel.
 -->
 <script type="text/html" id="layer-template">
-    <div class="btn-group btn-block"> 
+    <div class="btn-group btn-block">
         <!--Layer name and visibility button-->
         <button type="button"
                 class="btn btn-default layer-name wrap-panel-heading"
-                style="display: block; width: 85%;"
+                style="display: block; width: 80%;"
                 data-bind="click: $root.onToggleLayer, css: {active: $data.enabled()}">
-                    <span class="glyphicon pull-left"
-                          data-bind="css: {'glyphicon-eye-open': $data.enabled(), 'glyphicon-eye-close': !$data.enabled()}"></span>
+                <span>
+                    <input class="pull-left" type="checkbox" data-bind="'checked': $data.enabled()">
+                </span>
             <span class="layer" data-bind="text: $data.name()"></span>
         </button>
         <!--Display legend button-->
-        <button type="button" 
+        <button type="button"
                 class="toggle btn btn-default collapse"
-                style="display: block; width: 15%;"
+                style="display: block; width: 20%;"
                 data-toggle="collapse"
                 data-bind="css: {active: $data.enabled(), in: $data.enabled()},
                             attr: {
@@ -549,14 +591,13 @@ This script renders the individual layer view model items in the Layers panel.
                         'aria-expanded': $data.enabled() ? 'true' : 'false'}">
             <span class="glyphicon glyphicon-plus"></span>
         </button>
-
-        <!--Settings button-->
-         <button type="button"
+        <!--Settings button
+        <button type="button"
                 class="btn btn-default"
-                style="display: none;"
-                data-bind="css: {active: $data.enabled()}, click: $root.metaData">
+                style="display: block; width: 15%;"
+                data-bind="css: {active: $data.enabled()}, click: $root.onEditSettings">
             <span class="glyphicon glyphicon-cog"></span>
-        </button> 
+        </button> -->
     </div>
     <div class="collapse" data-bind="attr: {id: 'collapse-layer-' + $data.id()}">
         <div class="well">
@@ -564,33 +605,16 @@ This script renders the individual layer view model items in the Layers panel.
             <div>
                 <img data-bind="attr: {src: legendUrl}"/>
             </div>
-            <div>
-                <input class="layer" data-bind="attr: {id: ''+$data.name(), min: 0, max: 1, step: 0.2},css: {active: $data.enabled()}, value: $data.value, event:{change: $root.chag}, text: $data.name()" type="range">
-            </div>
-            <div>             
-                <button type="button" 
-                        class="toggle btn btn-default" 
-                        name="Meta Data" 
-                        data-bind="css: {active: $data.enabled()},click: $root.metaData">Meta Data
-                </button>
-            </div>
+			<div>
+				Opacity :
+				&nbsp;
+				<input class="layer" data-bind="attr: {id: ''+$data.name(), min: 0, max: 1, step: 0.2, value: 0.8},css: {active: $data.enabled()}, value: $data.value, event:{change: $root.chag}, text: $data.name()" type="range">
+				<!-- <input type="range" data-bind="event:{change: $root.funcA}"> -->
+			</div>
         </div>
-        </div>
-  
+    </div>
 
 </script>
-<!--
-**MetaData Item Template 
-This script  renders the individual detail of the layer
--->
-<div id="dialog" title="Basic dialog" style="display: none;">
-    <div class="content"> 
-    </div>
-</div>
-
-
-
-
 
 <!--
 Marker Item Template
@@ -640,6 +664,24 @@ This script renders the selected marker object the output panel.
 <!--
 Server Template
 This server-template script renders a server's tab content
+
+<div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+						Effects
+						Effects
+                            <a class="as" data-toggle="collapse" href="#effect-layers-panel" aria-expanded="false"
+                               aria-controls="effect-layers-panel">
+                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Effects"></span></small>
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="panel-collapse collapse in" id="effect-layers-panel">
+                        <div data-bind="template: { name: 'layer-template', foreach: effectsLayers}"></div>
+                    </div>
+                </div>
+				
+				data-bind="attr: {'aria-controls': 'server-layers-' + $data.id, href:'#server-layers-' + $data.id}"
 -->
 <script type="text/html" id="server-template">
     <!-- ko if: layers().length -->
@@ -647,59 +689,217 @@ This server-template script renders a server's tab content
         <div class="panel-heading" role="tab"
              data-bind=" attr: {id: 'server-panel-' + $index}">
             <h5 class="panel-title">
-                <span aria-expanded="true" data-bind="text:$data.title"></span>
-				<a href="#">
-                    <small><span class="pull-right glyphicon glyphicon-remove clickable_space"></span></small>
-                </a>
+                <span aria-expanded="true" data-bind="text:$data.title"></span>		
                 <a href="#" data-toggle="collapse" aria-expanded="true"
                    data-bind="attr: {'aria-controls': 'server-layers-' + $data.id, href:'#server-layers-' + $data.id}">
-                    <small><span class="toggle-icon pull-right glyphicon glyphicon-plus"></span></small>
+                    <small><span class="toggle-icon pull-right glyphicon glyphicon-plus" title="Collpase in/out Servers"></span></small>
                 </a>
+                
             </h5>
         </div>
         <div class="panel-collapse collapse" role="tabpanel"
              data-bind="attr: {id:'server-layers-' + $data.id, 'aria-labelledby': 'server-panel-' + $index()}">
+		<a href="#">
+                    <small><span class="pull-right glyphicon glyphicon-remove clickable_space" title="Remove Server"></span></small>
+                </a>
             <!-- ko template: { name: 'server-layer-template', foreach: layers } -->
             <!-- /ko -->
         </div>
     </div>
     <!-- /ko -->
 </script>
+<div style="display: none">
+    <div id="feature">
+         
+    </div>
+</div>
+
 <script>
+// $("#canvasOne").click(function() {
+//   opendialog("http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX=-104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625");
+// });
+// var url="http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX=-104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625";
+// function opendialog(url) {
+//   var $dialog = $('#canvasOne')
+//   .html('<iframe style="border: 0px; " src="http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX=-104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625" width="100%" height="100%"></iframe>')
+//   .dialog({
+//     title: "Page",
+//     autoOpen: false,
+//     dialogClass: 'dialog_fixed,ui-widget-header',
+//     modal: true,
+//     height: 500,
+//     minWidth: 400,
+//     minHeight: 400,
+//     draggable:true,
+//     /*close: function () { $(this).remove(); },*/
+//     buttons: { "Ok": function () {         $(this).dialog("close"); } }
+//   });
+//   $dialog.dialog('open');
+// } 
+
+
+$("#canvasOne").click(function () {
+    var $featuredialog =  $("#feature").html('<iframe style="border: 0px; " src="http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX=-104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625" width="100%" height="100%"></iframe>').dialog({ 
+              autoOpen: false,
+              title: "GetFeatureInfo"
+            });
+        $featuredialog.dialog("open");
+ 
+
+});
+
+
+
+ 
+
+
+
+
+
+// document.getElementById('canvasOne').addEventListener('click', function(evt) {
+//     console.logo("111");
+
+//     function(tile, imageFormat) {
+//         if (!tile) {
+//             throw new ArgumentError(
+//                 Logger.logMessage(Logger.LEVEL_SEVERE, "WmsUrlBuilder", "urlForTile", "missingTile"));
+//         }
+
+//         if (!imageFormat) {
+//             throw new ArgumentError(
+//                 Logger.logMessage(Logger.LEVEL_SEVERE, "WmsUrlBuilder", "urlForTile",
+//                     "The image format is null or undefined."));
+//         }
+
+//         var sector = tile.sector;
+
+//         var sb = WmsUrlBuilder.fixGetMapString(this.serviceAddress);
+
+//         if (sb.search(/service=wms/i) < 0) {
+//             sb = sb + "service=WMS";
+//         }
+
+//         sb = sb + "&request=GetFeatureInfo";
+//         sb = sb + "&version=" + this.wmsVersion;
+//         sb = sb + "&transparent=" + (this.transparent ? "TRUE" : "FALSE");
+//         sb = sb + "&layers=" + this.layerNames;
+//         sb = sb + "&styles=" + this.styleNames;
+//         sb = sb + "&format=" + imageFormat;
+//         //sb = sb + "&width=" + tile.tileWidth;
+//         //sb = sb + "&height=" + tile.tileHeight;
+
+//         // if (this.timeString) {
+//         //     sb = sb + "&time=" + this.timeString;
+//         // }
+//         console.log("112");
+
+//         size = this._map.getSize();
+//         var point = layer._map.latLngToContainerPoint(event.latlng, layer._map.getZoom());
+//         var temp = this.wmsParams.layers;
+//         var temp1 = temp.split(":");
+
+//         sb = sb + "&QUERY_LAYERS=" + temp1[1];
+//         sb = sb + "&info_format=text%2html";
+//         sb = sb + "&feature_count=50";
+//         sb = sb + "&x=50";
+//         sb = sb + "&y=50";
+//         sb = sb + "&srs=" + this.srs;
+//         sb = sb + "&width=101";
+//         sb = sb + "&height=101";
+//         sb = sb + "&bbox=" + this._map.getBounds().toBBoxString();
+
+
+
+//         // if (this.isWms130OrGreater) {
+//         //     sb = sb + "&crs=" + this.crs;
+//         //     sb = sb + "&bbox=";
+//         //     if (this.crs === "CRS:84") {
+//         //         sb = sb + sector.minLongitude + "," + sector.minLatitude + ",";
+//         //         sb = sb + sector.maxLongitude+ "," + sector.maxLatitude;
+//         //     } else {
+//         //         sb = sb + sector.minLatitude + "," + sector.minLongitude + ",";
+//         //         sb = sb + sector.maxLatitude+ "," + sector.maxLongitude;
+//         //     }
+//         // } else {
+//         //     sb = sb + "&srs=" + this.crs;
+//         //     sb = sb + "&bbox=";
+//         //     sb = sb + sector.minLongitude + "," + sector.minLatitude + ",";
+//         //     sb = sb + sector.maxLongitude+ "," + sector.maxLatitude;
+//         // }
+
+//         sb = sb.replace(" ", "%20");
+//         $(function() {
+//             $("<p>Mohan</p>").dialog();
+//         });
+//         return sb;
+//     };
+//     console.log("113");
+// }, false);
+
+
+// document.addEventListener("DOMContentLoaded", init, false);
+
+// function init() {
+//     var canvas = document.getElementById("canvasOne");
+//     canvas.addEventListener("mousedown", getPosition, false);
+// }
+
+// function getPosition(event) {
+//     var x = new Number();
+//     var y = new Number();
+//     var canvas = document.getElementById("canvasOne");
+
+//     if (event.x != undefined && event.y != undefined) {
+//         x = event.x;
+//         y = event.y;
+//     } else // Firefox method to get the position
+//     {
+//         x = event.clientX + document.body.scrollLeft +
+//             document.documentElement.scrollLeft;
+//         y = event.clientY + document.body.scrollTop +
+//             document.documentElement.scrollTop;
+//     }
+
+//     x -= canvas.offsetLeft;
+//     y -= canvas.offsetTop;
+
+//     alert("x: " + x + "  y: " + y);
+// }
+
+
+
     $(document).on('click','.glyphicon-remove', function(){
 
         $(this).parents('.panel').get(0).remove();
     });
+	$(document).ready(function()
+	{  
 
-</script>
+        Split(['.markersplit1', '.markersplit2'], {
+            direction: 'vertical',
+            resizeToHeight: 'true'
 
-<script>
-    //To change icon in source server list
-    $(document).on('click','.toggle-icon', function(){
+        });  
+        // $('#MySplitter').jqxSplitter
+        // ({orientation: 'vertical', width: 400, 
+        // height: 400, panels: [{ size: 200 }, { size: 200}] });
+        //$('#markers').splitter({type: 'h'});
+        // .splitter({ width: 850, height: 400, orientation: 'horizontal', panels: [{ size: 100 }, { size: 300 }] });
+
+		$('.as').click(function()
+		{
+			$(this).find('span').toggleClass('glyphicon-minus').toggleClass('glyphicon-plus');
+		}
+		);
+	}
+	);
+	$(document).on('click','.toggle-icon', function(){
         $(this).toggleClass('glyphicon-plus glyphicon-minus');
     });
-
-    //To change menu icon in layer,view View modals
-    $(document).on('click','.toggle', function(){
+	$(document).on('click','.toggle', function(){
         $(this).find('span').toggleClass('glyphicon-plus glyphicon-minus');
     });
-
-
-    //to Hide left side bar on window load
-    window.onload = function() {
-
-    $("#collapse-left-sidebar").click();
-    //$("#left-sidebar").hide();
-};
-
-// to show left side bar while source,layer, view clicked
-function showMe(){
-    
-    $("#left-sidebar").show();
-}
-
-    // To hide/show Logos
-        $('#tog').click(function(){
+	$('#tog').click(function(){
             $(this).find('i').toggleClass('glyphicon-eye-open glyphicon-eye-close');
             if($(this).find('i').hasClass('glyphicon-eye-open')){
                 $("#logo1,#logo2,#logo3").show();
@@ -710,7 +910,6 @@ function showMe(){
         });
 
 </script>
-
 <!--
 Server Layer Template
 This server-layer-template script recursively renders a server's layer list items
@@ -748,14 +947,16 @@ Window Splitter (placed here vs in main.js so that its layout is visible ASAP)
         direction: 'horizontal',
         minSize: [160, 240],// pixels
         sizes: [29.72, 70.28],    // percentages
-        gutterSize: 10
+        gutterSize: 10,
+        collapsed: true
     });
-    /*var outputSplitter = Split(['#globe', '#output'], {
-     direction: 'vertical',
-     minSize: [100, 100],
-     sizes: [70, 30],
-     gutterSize: 10
-     });        */
+
+     // var outputSplitter = Split(['#markersplit1', '#markersplit2'], {
+     // direction: 'vertical',
+     // minSize: [100, 100],
+     // sizes: [70, 30],
+     // gutterSize: 10
+     // });        
     // Add a handler to collapse the left side panel
     $('#collapse-left-sidebar').on('click', sidebarSplitter, function (event) {
         // Collapse the sidebar (1st item in splitter array
@@ -764,11 +965,11 @@ Window Splitter (placed here vs in main.js so that its layout is visible ASAP)
         splitter.collapse(0);
     });
     // Add a handler to collapse the output panel
-    /*$('#collapse-output-panel').on('click', outputSplitter, function (event) {
-     // Collapse the output panel (2nd item in splitter array)
-     var splitter = event.data;
-     splitter.collapse(1);
-     });*/
+    // $('#collapse-output-panel').on('click', outputSplitter, function (event) {
+    //  // Collapse the output panel (2nd item in splitter array)
+    //  var splitter = event.data;
+    //  splitter.collapse(1);
+    //  });
     // Add a handler to restore the left side panel
     $('.left-sidebar-btn').on('click', sidebarSplitter, function (event) {
         var splitter = event.data;
@@ -782,7 +983,6 @@ Window Splitter (placed here vs in main.js so that its layout is visible ASAP)
     });
 
 </script>
-
 
 <!--Prototyping the jquery fancytree plugin-->
 <!--<script src="//cdn.jsdelivr.net/jquery.fancytree/2.9.0/jquery.fancytree-all.min.js" type="text/javascript"></script>-->

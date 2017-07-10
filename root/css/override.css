@@ -126,7 +126,8 @@ body {
     height: 100%;
     float: left;
 }
-.split.split-vertical {
+.split.split-vertical, .gutter.gutter-vertical {
+    width: 100%;
 }
 
 .sub-header {

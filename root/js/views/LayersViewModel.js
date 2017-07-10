@@ -19,7 +19,6 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
              * @param {Globe} globe The globe that provides the layer manager.
              * @constructor
              */
-
             function LayersViewModel(globe) {
                 var self = this,
                         layerManager = globe.layerManager;
@@ -27,14 +26,16 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                 // Create view data sources from the LayerManager's observable arrays
                 self.baseLayers = layerManager.baseLayers;
                 self.overlayLayers = layerManager.overlayLayers;
+				self.overlay1Layers = layerManager.overlay1Layers;
                 self.dataLayers = layerManager.dataLayers;
                 //self.effectsLayers = layerManager.effectsLayers;
                 //self.widgetLayers = layerManager.widgetLayers;
 
                 // Layer type options
                 self.optionValues = ["WMS Layer", "WMTS Layer", "KML file", "Shapefile"];
-                self.selectedOptionValue = ko.observable(self.optionValues[0]);                
-                 
+                self.selectedOptionValue = ko.observable(self.optionValues[0]);
+				self.curr = ko.observable(0.8);
+                //self.rangeValue = ko.observable(0.8);
                 /**
                  * An observable array of servers
                  */
@@ -46,32 +47,30 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                  * @param {Object} layer The selected layer in the layer collection
                  */
                 self.onToggleLayer = function (layer) {
+					
                     layer.enabled(!layer.enabled());
                     globe.redraw();
                 };
-                /*
-                *  Opacity Slider 
-                */
-
-                self.chag = function(data, event, layer) {
-
-                    var layerName = event.target.id;
-                    var layers = globe.wwd.layers,
-                        i, len;
-                    for (i = 0, len = layers.length; i < len; i++) {
-                        if (layers[i].displayName === layerName) {
-                            layers[i].opacity = data.value;
-                            globe.redraw();
-                        }
-                    }
-                };
+				self.chag = function (data,event,layer)
+				{
+					
+					var layerName = event.target.id;
+					var layers = globe.wwd.layers,i, len;
+              for (i = 0, len = layers.length; i < len; i++) 
+			  {
+                  if (layers[i].displayName === layerName) {
+                   layers[i].opacity = data.value;
+					 globe.redraw();
+                 }
+             }
+		};
 
                 /**
                  * Opens a dialog to edit the layer settings.
                  * @param {Object} layer The selected layer in the layer collection
                  */
-                
-                self.onEditSettings = function (layer){
+                self.onEditSettings = function (layer) {
+                    
                     $('#opacity-slider').slider({
                         animate: 'fast',
                         min: 0,
@@ -91,47 +90,13 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                     
                     //console.log(layer.name() + ":  " + layer.opacity());
                     $("#opacity-slider").slider("option", "value", layer.opacity());
-                    $("#layer-settings-dialog").dialog("open"); 
-
-
-                }; 
-                /**
-                *Meta Data 
-                *
-                */
-
-                self.metaData = function(layer) {
-                    
-                    $("#dialog").dialog({
-                      autoOpen: false,
-                      show: {
-                        effect: "blind",
-                        duration: 700
-                      },
-                      hide: {
-                        effect: "explode",
-                        duration: 500
-                      },
-                      title: layer.name(),
-                      open: function ( ) {
-                        $(this).html("Layer Name: "+layer.name()+
-                                     "<br>Layer Opacity: "+layer.opacity()+
-                                     "<br>Layer Category: "+layer.category()+
-                                     "<br>Layer Enabled: "+layer.timeSequence+
-                                     "<br>Layer Url: "+(layer.legendUrl ? layer.legendUrl.url : ''));                         
-                      }
-                    });
-                 
-                     
-                      $( "#dialog" ).dialog( "open" );
-                     
-                    
-                  };
-                                
+                    $("#layer-settings-dialog").dialog("open");
+                };
+                
+                
                 /**
                  * Opens the Add Layer dialog.
                  */
-
                 self.onAddLayer = function() {
                     $("#add-layer-dialog").dialog({
                         autoOpen: false,

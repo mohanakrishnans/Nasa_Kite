@@ -20,61 +20,24 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                 // Create view data sources from the LayerManager's observable array
                 self.effectsLayers = layerManager.effectsLayers;
                 self.widgetLayers = layerManager.widgetLayers;
-				        self.onToggleLayer = function (layer) {
+				self.onToggleLayer = function (layer) {
+					//console.log(layer.name());
                     layer.enabled(!layer.enabled());
                     globe.redraw();
                 };
-                /*
-                *  Opacity Slider 
-                */
-                self.chag = function(data, event, layer) {
-
-                    var layerName = event.target.id;
-                    var layers = globe.wwd.layers,
-                        i, len;
-                    for (i = 0, len = layers.length; i < len; i++) {
-                        if (layers[i].displayName === layerName) {
-                            layers[i].opacity = data.value;
-                            globe.redraw();
-                        }
-                    }
-                };
-                /**
-                *Meta Data 
-                *
-                */
-
-                self.metaData = function(layer) {
-                 
-                 $("#dialog").dialog({
-                      autoOpen: false,
-                      show: {
-                        effect: "blind",
-                        duration: 700
-                      },
-                      hide: {
-                        effect: "explode",
-                        duration: 500
-                      },
-                      title: layer.name(),
-                      open: function ( ) {
-                        $(this).html("Layer Name: "+layer.name()+
-                                     "<br>Layer Opacity: "+layer.opacity()+
-                                     "<br>Layer Category: "+layer.category()+
-                                     "<br>Layer Enabled: "+layer.enabled()+
-                                     "<br>Layer Url: "+(layer.legendUrl ? layer.legendUrl.url : ''));                         
-                        }
-                    });
-                 
-                     $( "#dialog" ).dialog( "open" );
-                     
-                    
-                  } ;
-                  /*
-                  *
-                  */
-                  
-
+				self.chag = function (data,event,layer)
+				{
+					
+					var layerName = event.target.id;
+					var layers = globe.wwd.layers,i, len;
+              for (i = 0, len = layers.length; i < len; i++) 
+			  {
+                  if (layers[i].displayName === layerName) {
+                   layers[i].opacity = data.value;
+					 globe.redraw();
+                 }
+             }
+		};
 				self.onEditSettings = function (layer) {
                     
                     $('#opacity-slider').slider({
@@ -106,6 +69,7 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                     
                     $("#add-layer-dialog").dialog("open");
                 };
+				
 			 }
 				 return ViewsViewModel;
 		}

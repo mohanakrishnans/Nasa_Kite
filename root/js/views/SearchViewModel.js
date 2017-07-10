@@ -54,14 +54,13 @@ define(['knockout',
                 }
             };
 			$('.gos').click(function() {
-			//self.goToAnimator.goTo(new WorldWind.Location(44.046, -123.022));
-            self.goToAnimator.goTo(new WorldWind.Position(44.046, -123.022, 2e5));
-            });
+			self.goToAnimator.goTo(new WorldWind.Location(44.046, -123.022));
+			});
 			$('.ns').click(function() {
                 self.goToAnimator.goTo(new WorldWind.Location(37.408866, -122.064426));
             });
             $('.kt').click(function() {
-                self.goToAnimator.goTo(new WorldWind.Position(11.084833, 76.998019,1e3));
+                self.goToAnimator.goTo(new WorldWind.Location(11.081597, 76.997963));
             });
             
         }

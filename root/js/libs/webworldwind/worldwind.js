@@ -14606,6 +14606,7 @@ define('util/WmsUrlBuilder',[
              * @default EPSG:4326
              */
             this.crs = "EPSG:4326";
+            this.srs = "EPSG:4326";
 
             /**
              * The time parameter included in GetMap requests. If null, no time parameter is included in the requests.
@@ -14674,7 +14675,81 @@ define('util/WmsUrlBuilder',[
 
             return sb;
         };
+        /*
+        **
+        **
+        */
+        WmsUrlBuilder.prototype.getFeatureInfo = function (tile, imageFormat) {
+            if (!tile) {
+                throw new ArgumentError(
+                    Logger.logMessage(Logger.LEVEL_SEVERE, "WmsUrlBuilder", "urlForTile", "missingTile"));
+            }
 
+            if (!imageFormat) {
+                throw new ArgumentError(
+                    Logger.logMessage(Logger.LEVEL_SEVERE, "WmsUrlBuilder", "urlForTile",
+                        "The image format is null or undefined."));
+            }
+
+            var sector = tile.sector;
+
+            var sb = WmsUrlBuilder.fixGetMapString(this.serviceAddress);
+
+            if (sb.search(/service=wms/i) < 0) {
+                sb = sb + "service=WMS";
+            }
+
+            sb = sb + "&request=GetFeatureInfo";
+            sb = sb + "&version=" + this.wmsVersion;
+            sb = sb + "&transparent=" + (this.transparent ? "TRUE" : "FALSE");
+            sb = sb + "&layers=" + this.layerNames;
+            sb = sb + "&styles=" + this.styleNames;
+            sb = sb + "&format=" + imageFormat;
+            //sb = sb + "&width=" + tile.tileWidth;
+            //sb = sb + "&height=" + tile.tileHeight;
+
+            // if (this.timeString) {
+            //     sb = sb + "&time=" + this.timeString;
+            // }
+
+            size = this._map.getSize();
+            var point = layer._map.latLngToContainerPoint(event.latlng, layer._map.getZoom());
+            var temp =this.wmsParams.layers;
+            var temp1=temp.split(":");
+
+            sb = sb + "&QUERY_LAYERS=" + temp1[1];
+            sb = sb + "&info_format=text%2html";
+            sb = sb + "&feature_count=50";
+            sb = sb + "&x=50";
+            sb = sb + "&y=50";
+            sb = sb + "&srs=" + this.srs;
+            sb = sb + "&width=101";
+            sb = sb + "&height=101";
+            sb = sb + "&bbox=" + this._map.getBounds().toBBoxString();
+                                
+
+
+            // if (this.isWms130OrGreater) {
+            //     sb = sb + "&crs=" + this.crs;
+            //     sb = sb + "&bbox=";
+            //     if (this.crs === "CRS:84") {
+            //         sb = sb + sector.minLongitude + "," + sector.minLatitude + ",";
+            //         sb = sb + sector.maxLongitude+ "," + sector.maxLatitude;
+            //     } else {
+            //         sb = sb + sector.minLatitude + "," + sector.minLongitude + ",";
+            //         sb = sb + sector.maxLatitude+ "," + sector.maxLongitude;
+            //     }
+            // } else {
+            //     sb = sb + "&srs=" + this.crs;
+            //     sb = sb + "&bbox=";
+            //     sb = sb + sector.minLongitude + "," + sector.minLatitude + ",";
+            //     sb = sb + sector.maxLongitude+ "," + sector.maxLatitude;
+            // }
+
+            sb = sb.replace(" ", "%20");
+
+            return sb;
+        };
         // Intentionally not documented.
         WmsUrlBuilder.fixGetMapString = function (serviceAddress) {
             if (!serviceAddress) {

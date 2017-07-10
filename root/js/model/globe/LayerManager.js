@@ -37,6 +37,8 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
 
             /** Overlay layers may be translucent and/or contain sparce content, and may be stacked with other layers.  */
             this.overlayLayers = ko.observableArray();
+			
+			this.overlay1Layers = ko.observableArray();
 
             /** Effects layers (like atmosphere) are stacked with other layers.  */
             this.effectsLayers = ko.observableArray();
@@ -153,6 +155,18 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
             // Add a proxy for this layer to the list of overlays
             this.overlayLayers.push(LayerManager.createLayerViewModel(layer));
         };
+		
+		LayerManager.prototype.addOverlay1Layer = function (layer, options) {
+            // Determine the index of this layer within the WorldWindow
+            var index = this.backgroundLayers().length + this.baseLayers().length + this.overlay1Layers().length;
+
+            LayerManager.applyOptionsToLayer(layer, options, constants.LAYER_CATEGORY_OVERLAY);
+
+            this.globe.wwd.insertLayer(index, layer);
+
+            // Add a proxy for this layer to the list of overlays
+            this.overlay1Layers.push(LayerManager.createLayerViewModel(layer));
+        };
 
         /**
          * Effect layers may be stacked with other layers.
@@ -161,17 +175,13 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
          */
         LayerManager.prototype.addEffectLayer = function (layer, options) {
             // Determine the index of this layer within the WorldWindow
-            var index = this.backgroundLayers().length + this.baseLayers().length + this.overlayLayers().length + this.effectsLayers().length;
+            var index = this.backgroundLayers().length + this.baseLayers().length + this.overlayLayers().length + this.overlay1Layers().length + this.effectsLayers().length;
 
             LayerManager.applyOptionsToLayer(layer, options, constants.LAYER_CATEGORY_EFFECT);
 
             this.globe.wwd.insertLayer(index, layer);
 
             // Add a proxy for this layer to the list of overlays
-            layer.enabled=false;
-            layer.displayName="Day/Night";
-            this.effectsLayers.push(LayerManager.createViewsViewModel(layer));
-            layer.displayName="Atmosphere";
             this.effectsLayers.push(LayerManager.createViewsViewModel(layer));
         };
 
@@ -181,7 +191,7 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
          * @param {Object} options
          */
         LayerManager.prototype.addDataLayer = function (layer, options) {
-            var index = this.backgroundLayers().length + this.baseLayers().length + this.overlayLayers().length + this.effectsLayers().length
+            var index = this.backgroundLayers().length + this.baseLayers().length + this.overlayLayers().length + this.overlay1Layers().length + this.effectsLayers().length
                 + this.dataLayers().length;
 
             LayerManager.applyOptionsToLayer(layer, options, constants.LAYER_CATEGORY_DATA);
@@ -197,7 +207,7 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
          * @param {WorldWind.Layer} layer
          */
         LayerManager.prototype.addWidgetLayer = function (layer) {
-            var index = this.backgroundLayers().length + this.baseLayers().length + this.overlayLayers().length + this.effectsLayers().length
+            var index = this.backgroundLayers().length + this.baseLayers().length + this.overlayLayers().length + this.overlay1Layers().length +this.effectsLayers().length
                 + this.dataLayers().length + this.widgetLayers().length;
 
             LayerManager.applyOptionsToLayer(layer, {
@@ -321,6 +331,7 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
 			var sa = layerCaps.title;
 			//console.log('Success');
 			this.overlayLayers.remove(function(viewModel){ return viewModel.name() == sa});
+			this.overlay1Layers.remove(function(viewModel){ return viewModel.name() == sa});
 		}
         /**
          *
@@ -341,7 +352,7 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
                 request = new XMLHttpRequest(),
                 url = WorldWind.WmsUrlBuilder.fixGetMapString(serverAddress);
 
-            url += "service=WMS&request=GetCapabilities&vers";
+            url += "service=WMS&request=GetCapabilities&version=1.3.0";
 
             request.open("GET", url, true);
             request.onreadystatechange = function () {
@@ -429,30 +440,12 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
                         isLayer: isLayer,
                         layers: ko.observableArray()   // children
                     };
-                    if(layer.title == 'Taxlot'){
-                        var layer = wmsLayers[i],
-                            isLayer = ko.observable(layer.name && layer.name.length > 0 || false),
-                        node = {
-                        title: layer.title,
-                        abstract: layer.abstract,
-                        layerCaps: layer,
-                        isChecked: ko.observable(true),
-                        isFolder: !isLayer,
-                        isLayer: isLayer,
-                        layers: ko.observableArray()   // children
-                    };
-                    }
 
                 if (layer.layers && layer.layers.length > 0) {
                     this.assembleLayers(layer.layers, node.layers);
                 }
 
                 layerNodes.push(node);
-                if(layer.title == 'Taxlot'){
-               // return layerNodes;
-               //console.log("Success");
-             this.addLayerFromCapabilities(layer, constants.LAYER_CATEGORY_OVERLAY);
-           }
             }
 
             return layerNodes;
@@ -507,10 +500,20 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
                 if (category === constants.LAYER_CATEGORY_BASE) {
                     this.addBaseLayer(layer);
                 } else if (category === constants.LAYER_CATEGORY_OVERLAY) {
+					//console.log(layer.legendUrl.url);
+					if(layer.legendUrl.url.includes("199.79.36.156"))
+					{
                     this.addOverlayLayer(layer);
+					}
+					else
+					{
+						this.addOverlay1Layer(layer);
+					}
+					
                 } else if (category === constants.LAYER_CATEGORY_DATA) {
                     this.addDataLayer(layer);
                 } else {
+					
                     this.addBaseLayer(layer);
                 }
 
@@ -521,22 +524,8 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
         };
 
         LayerManager.prototype.removeLayer = function (layerCaps) {
-            //this.removeLegend(layerCaps.companionLayer);
-			//layer.enabled=false;
-            //console.log(layerCaps);
-			//this.removeL(layerCaps.title);
-			//ko.cleanNode(LayerManager.overlayLayers);
-			//console.log(layerCaps);
-			//console.log(LayerManager.createLayerViewModel(layerCaps));
-			//console.log(this.overlayLayers.remove(function(this.findLayer(layerCaps.title))));
-			//this.removeL(layerCaps.title);
 			this.removeLayerViewModel(layerCaps);
-			//var em = new this.overlayLayers();
-			//ko.applyBindings(em);
 			this.globe.wwd.removeLayer(layerCaps);
-			
-			
-
             if (this.timeSeriesPlayer && this.timeSeriesPlayer.layer === layerCaps) {
                 this.timeSeriesPlayer.timeSequence = null;
                 this.timeSeriesPlayer.layer = null;
