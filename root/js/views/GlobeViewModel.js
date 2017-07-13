@@ -197,16 +197,30 @@ define(['knockout', 'jquery', 'jqueryui',
                 self.handleDropClick(event);
                 var x = event.clientX;
                 var y = event.clientY;
+
+
                 var pickList = globe.wwd.pick(globe.wwd.canvasCoordinates(x, y));
 
-
+                //edObject
                 // var pick = globe.wwd.terrainObject(globe.wwd.canvasCoordinates(x,y));
                  var position = pickList.objects[0].position;
-                alert("test "+ position.latitude +" "+ position.longitude) ;
+                 var lay = pickList.objects[0].parentLayer;
 
-                   JSON.stringify(pick,null,"4");
+                 var xmin = position.longitude;
+                 var ymin = position.latitude;
+                 var xmax = xmin + 0.3;
+                 var ymax = ymin + 0.3;
+                 var latlon = xmin + "," + ymin + "," + xmax + "," + ymax;
+                 //var top  = pickList.objects[1].parentLayer;
+
+                console.log("Mohan "+(lay));
+                console.log("Mohan "+latlon +" " + top);
+
+                //alert("test "+ position.latitude +" "+ position.longitude) ; -104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625
+
+                   //JSON.stringify(pick,null,"4");
                     var $featuredialog =  $("#feature")
-                    .html('<iframe style="border: 0px; " src="http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX=-104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625" width="100%" height="100%"></iframe>')
+                    .html('<iframe style="border: 0px; " src="http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX='+latlon+'" width="100%" height="100%"></iframe>')
                     .dialog({ 
                               autoOpen: false,
                               title: "GetFeatureInfo"
@@ -214,6 +228,9 @@ define(['knockout', 'jquery', 'jqueryui',
                         $featuredialog.dialog("open");
 
             });
+
+
+
 
         }
 
