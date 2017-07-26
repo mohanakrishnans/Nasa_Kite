@@ -203,6 +203,20 @@ Main Content
             </div>
             <div id="layers-body" class="section-body collapse in">
                 <!--TODO: This entire section could be driven by an observable array-->
+                <div class="panel panel-default" data-bind="sortable: overlay1Layers">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                        State Spatial Data
+                            <a data-toggle="collapse" class="as" href="#overlay1-layers-panel" aria-expanded="false"
+                               aria-controls="overlay1-layers-panel">
+                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Overlays"></span></small>
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="panel-collapse collapse in" id="overlay1-layers-panel">
+                        <div data-bind="template: { name: 'layer-template', foreach: overlay1Layers}"></div>
+                    </div>
+                </div>
 				<div class="panel panel-default" data-bind="sortable: overlay1Layers">
                     <div class="panel-heading">
                         <h5 class="panel-title">
@@ -585,10 +599,9 @@ This script renders the individual layer view model items in the Layers panel.
                 style="display: block; width: 20%;"
                 data-toggle="collapse"
                 data-bind="css: {active: $data.enabled(), in: $data.enabled()},
-                            attr: {
-                        'data-target': '#collapse-layer-' + $data.id(),
+                        attr: {'data-target': '#collapse-layer-' + $data.id(),
                         'aria-controls': 'collapse-layer-' + $data.id(),
-                        'aria-expanded': $data.enabled() ? 'true' : 'false'}">
+                        'aria-expanded': $data.enabled() ? 'true' : 'false'},enable: $data.enabled()">
             <span class="glyphicon glyphicon-plus"></span>
         </button>
         <!--Settings button
