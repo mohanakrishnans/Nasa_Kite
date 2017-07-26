@@ -375,6 +375,7 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
 
                         // Process the servers's capabilities document
                         self.servers.push(self.loadServerCapabilites(serverAddress, wmsCapsDoc));
+                        //console.log(serverAddress);
 
                     } else {
                         alert(serverAddress +
