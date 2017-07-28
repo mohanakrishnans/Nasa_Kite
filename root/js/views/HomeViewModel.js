@@ -47,11 +47,19 @@ define(['knockout',
             };
             layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=BASE_WMS.map&");
 			layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=FAC_WMS.map&");
-            layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=LAND_MGT_WMS.map&");
+            //
+            layerManager.addServer("http://giswebservices.massgis.state.ma.us/geoserver/wms?");
+            layerManager.addServer("http://localhost:8080/geoserver/Mohan/wms?");
+            layerManager.addServer("http://localhost:8080/geoserver/topp/wms?");
+            
+            //
+			layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=LAND_MGT_WMS.map&");
 			layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=ES_WMS.map&");
 			layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=ENVIRON_WMS.map&");
-            layerManager.addServer("http://localhost:8080/geoserver/topp/wms?");
-            layerManager.addServer("http://localhost:8080/geoserver/sf/wms?");
+            //http://giswebservices.massgis.state.ma.us/geoserver/wms? http://localhost:8080/geoserver/topp/wms?
+            //http://localhost:8080/geoserver/Mohan/wms?
+			
+			
         }
 
         return HomeViewModel;
