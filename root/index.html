@@ -203,6 +203,20 @@ Main Content
             </div>
             <div id="layers-body" class="section-body collapse in">
                 <!--TODO: This entire section could be driven by an observable array-->
+                <div class="panel panel-default" data-bind="sortable: overlay1Layers">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                        State Spatial Data
+                            <a data-toggle="collapse" class="as" href="#overlay1-layers-panel" aria-expanded="false"
+                               aria-controls="overlay1-layers-panel">
+                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Overlays"></span></small>
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="panel-collapse collapse in" id="overlay1-layers-panel">
+                        <div data-bind="template: { name: 'layer-template', foreach: overlay1Layers}"></div>
+                    </div>
+                </div>
 				<div class="panel panel-default" data-bind="sortable: overlay1Layers">
                     <div class="panel-heading">
                         <h5 class="panel-title">
@@ -349,12 +363,34 @@ Main Content
 				<div class="panel panel-default">
                     <div class="panel-heading">
                         <h5 class="panel-title">
-                        <a id="tog" class="btn btn-default" style="display: block; width: 100%;">
-                                <i class="glyphicon glyphicon-eye-open"></i>
-                                <span>Logos</span>
-                                
-                        </a>
+                        Logos
+                            <a class="as" data-toggle="collapse" href="#logo-layers-panel" aria-expanded="false"
+                               aria-controls="logo-layers-panel">
+                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Effects"></span></small>
+                            </a>
                         </h5>
+                    </div>
+                    <div class="panel-collapse collapse in" id="logo-layers-panel">
+                        
+                            <!--Layer name and visibility button-->
+                            <button type="button" id="icon_Springfield" class="btn btn-default active" style="display: block; width: 100%;">
+                                <span>
+                                    <input class="pull-left" type="checkbox" id="btn_Springfield">
+                                </span>
+                                <span class="layer">SpringField OR</span>
+                            </button>
+                        <button type="button" id="icon_Nasa" class="btn btn-default active" style="display: block; width: 100%;">
+                                <span>
+                                    <input class="pull-left" type="checkbox" id="btn_Nasa">
+                                </span>
+                                <span class="layer">Ames Center NASA</span>
+                            </button>
+                        <button type="button" id="icon_Kite" class="btn btn-default active" style="display: block; width: 100%;">
+                                <span>
+                                    <input class="pull-left" type="checkbox" id="btn_Kite">
+                                </span>
+                                <span class="layer">KiTE Campus</span>
+                            </button>
                     </div>
                 </div>
                 <div class="panel panel-default">
@@ -585,10 +621,9 @@ This script renders the individual layer view model items in the Layers panel.
                 style="display: block; width: 20%;"
                 data-toggle="collapse"
                 data-bind="css: {active: $data.enabled(), in: $data.enabled()},
-                            attr: {
-                        'data-target': '#collapse-layer-' + $data.id(),
+                        attr: {'data-target': '#collapse-layer-' + $data.id(),
                         'aria-controls': 'collapse-layer-' + $data.id(),
-                        'aria-expanded': $data.enabled() ? 'true' : 'false'}">
+                        'aria-expanded': $data.enabled() ? 'true' : 'false'},enable: $data.enabled()">
             <span class="glyphicon glyphicon-plus"></span>
         </button>
         <!--Settings button
@@ -874,6 +909,9 @@ This server-template script renders a server's tab content
     });
 	$(document).ready(function()
 	{  
+        $("#btn_Springfield").prop("checked", true);
+        $("#btn_Nasa").prop("checked", true);
+        $("#btn_Kite").prop("checked", true);
 
         Split(['.markersplit1', '.markersplit2'], {
             direction: 'vertical',
@@ -908,6 +946,28 @@ This server-template script renders a server's tab content
             }
 
         });
+
+    $('#icon_Springfield').click(function(){
+       $("#logo1").toggle();
+       if($("#btn_Springfield").is(":checked"))  
+            $("#btn_Springfield").prop("checked", false);  
+        else
+            $("#btn_Springfield").prop("checked", true);
+    });
+    $('#icon_Nasa').click(function(){
+       $("#logo3").toggle();
+       if($("#btn_Nasa").is(":checked"))  
+            $("#btn_Nasa").prop("checked", false);  
+        else
+            $("#btn_Nasa").prop("checked", true);
+    });
+    $('#icon_Kite').click(function(){
+       $("#logo2").toggle();
+       if($("#btn_Kite").is(":checked"))  
+            $("#btn_Kite").prop("checked", false);  
+        else
+            $("#btn_Kite").prop("checked", true);
+    });
 
 </script>
 <!--
