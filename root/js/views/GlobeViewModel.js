@@ -193,6 +193,7 @@ define(['knockout', 'jquery', 'jqueryui',
                 self.timeSliderValue(0);
             };
 
+            var property1,property2;
             globe.wwd.addEventListener('click', function (event) {
                 self.handleDropClick(event);
                 var x = event.clientX;
@@ -209,13 +210,20 @@ define(['knockout', 'jquery', 'jqueryui',
                 //console.log(lay);
                  var xmin = position.longitude;
                  var ymin = position.latitude;
-                 var xmax = xmin + 0.3;
-                 var ymax = ymin + 0.3;
+                 var xmax = xmin + 0.00001 ;
+                 var ymax = ymin + 0.00001;
                  var latlon = xmin + "," + ymin + "," + xmax + "," + ymax;
+
+
                  //var top  = pickList.objects[1].parentLayer;
                 //alert("test "+ position.latitude +" "+ position.longitude) ; -104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625
 
-                var test,property,property1,property2,i;
+                var property,i,state,lsad,country,name;
+                var result = [];
+                var test ="";
+
+                //<!--For Single Static Layer URL -->
+
                 // var my_url = 'http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=application%2Fjson&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX='+latlon+'';
                 // fetch(my_url)
                 // .then(res => res.json())
@@ -240,33 +248,99 @@ define(['knockout', 'jquery', 'jqueryui',
                 //     }
                 // })
 
-                var My_Url = ['http://localhost:8080/geoserver/sf/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=sf%3Aarchsites&STYLES&LAYERS=ssf%3Aarchsites&INFO_FORMAT=application%2Fjson&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A26713&WIDTH=101&HEIGHT=101&BBOX='+latlon+'','http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=application%2Fjson&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX='+latlon+''];
+                //<!--For Single Static Layer URL -->
+
+
+                //<!-- For Multiple Static Layer URL --->
+                //<!--- Still Working on it --->
+                console.log(latlon);
+                var $featuredialog
+                var My_Url = ['http://localhost:8080/geoserver/US_States/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=US_States%3Aus%20states%202&STYLES&LAYERS=US_States%3Aus%20states%202&INFO_FORMAT=application%2Fjson&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4269&WIDTH=101&HEIGHT=101&BBOX='+latlon+'',
+                               'http://localhost:8080/geoserver/US_States/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=US_States%3AUs%20states%201&STYLES&LAYERS=US_States%3AUs%20states%201&INFO_FORMAT=application%2Fjson&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4269&WIDTH=101&HEIGHT=101&BBOX='+latlon+''];
                 for(i in My_Url){
+                    var j = 0;
                     //console.log("get",My_Url[i]);
                     fetch(My_Url[i])
                 .then(res => res.json())
                 .then((out) => {
-                    console.log('Checkout this JSON! ', out);
+                    //console.log('Checkout this JSON! ', out);
                     if(out.crs == null){
-                        console.log('no object');
+                        //console.log('no object');
                     }else{
-                        property = out.features.properties;
-                        console.log('Checkout this properties! ', property);
+                        property = out.features[0].properties;
+                        //console.log('Checkout this properties! ', property);
 
-                        // var $featuredialog =  $("#feature")                    
-                        // .html('State Name : '+property.STATE_NAME+
-                        //     '<br>Population : '+property.PERSONS+
-                        //     '<br>Families : '+property.FAMILIES+
-                        //     '<br>Males : '+property.MALE)
-                        // .dialog({ 
-                        //       autoOpen: false,
-                        //       title: "GetFeatureInfo"
-                        //     });
-                        //     $featuredialog.dialog("open");
+                        //<!-- To Display in form of table --->
+                        // result[j]="<table>";
+                        // result[j] += "<tr><th>property</th><th>Values</th></tr>";
+                        // result[j] += "<tr><td>State : </td><td>"+property.STATE+"</td></tr>";
+                        // result[j] += "<tr><td>LSAD : </td><td>"+property.LSAD+"</td></tr>";
+                        // result[j] += "<tr><td>Name : </td><td>"+property.NAME+"</td></tr>";
+                        // result[j] += "<tr><td>County : </td><td>"+property.COUNTY+"</td></tr>";
+                        // result[j] += "</table>";
+                        //<!-- To Display in form of table --->
+
+                        //<!-- To Display in form of List --->
+                        // result[j] ="<ul><li>State : "+ property.STATE +"</li>"+
+                        // "<li>LSAD : "+ property.LSAD +"</li>"+
+                        // "<li>Name : "+ property.NAME +"</li>"+
+                        // "<li>Country : "+ property.COUNTY +"</li></ul>";
+                        //<!-- To Display in form of List --->
+
+                        
+                         if(j == 0)
+                          property1 ="<ul><li>State : "+ property.STATE +"</li><li>LSAD : "+ property.LSAD +"</li><li>Name : "+ property.NAME +"</li><li>Country : "+ property.COUNTY +"</li></ul>";
+                          //  property1="<table style='width:100%;text-align:left;background-color:pink;'><tr><th>property</th><th>Values</th></tr><tr><td>State : </td><td>"+property.STATE+"</td></tr><tr><td>LSAD : </td><td>"+property.LSAD+"</td></tr><tr><td>Name : </td><td>"+property.NAME+"</td></tr><tr><td>County : </td><td>"+property.COUNTY+"</td></tr></table>";
+
+                         else
+                            //property2="<table style='width:100%;text-align:left;background-color:pink;'><tr><th>property</th><th>Values</th></tr><tr><td>State : </td><td>"+property.STATE+"</td></tr><tr><td>LSAD : </td><td>"+property.LSAD+"</td></tr><tr><td>Name : </td><td>"+property.NAME+"</td></tr><tr><td>County : </td><td>"+property.COUNTY+"</td></tr></table>";
+                          property2 ="<ul><li>State : "+ property.STATE +"</li><li>LSAD : "+ property.LSAD +"</li><li>Name : "+ property.NAME +"</li><li>Country : "+ property.COUNTY +"</li></ul>";
+                        
+                        // //<!-- To Display in form of List --->
+                        // result[j] ="<ul>";
+                        // result[j] +="<li>State :"+ property.STATE +"</li>";
+                        // result[j] +="<li>LSAD :"+ property.LSAD +"</li>";
+                        // result[j] +="<li>Name :"+ property.NAME +"</li>";
+                        // result[j] +="<li>Country :"+ property.COUNTY +"</li>";
+                        // result[j] +="</ul>";
+                        // //<!-- To Display in form of List --->
+
+                        j++;
+
+                        
+
+                        // <!-- Array Push Test Fails -->
+                        // result.push([{"State : " : property.STATE}]);
+                        //     result.push([{"LSAD : " : property.LSAD}]);
+                        //     result.push([{"Name : " : property.NAME}]);
+                        //     result.push([{"Country : ": property.COUNTY}]);
+                        //result.push([{"State : " : property.STATE},{"LSAD : " : property.LSAD},{"Name : " : property.NAME},{"Country : ": property.COUNTY}]);
+                        //result.push([{"State : " : property.STATE,"LSAD : " : property.LSAD,"Name : " : property.NAME,"Country : ": property.COUNTY}]);
+                        //console.log("Result",result);
+                        // <!-- Array Push Test Fails -->
+                        
                     }
+                        
+                    
                 })
+            }
+            //test = "<ul><li>State :56</li><li>LSAD :County</li><li>Name :Natrona</li><li>Country :025</li></ul>";
+            i = 0;
+            //test = result.shift();result.toSource()
+            //alert(document.write(result));
+            console.log("Result",property1);
+                        //if(property1 != "undefined" || property2 != "undefined"){
+                            $featuredialog =  $("#feature")                  
+                        .html(property1 +"<br>"+ property2)
+                        .dialog({ 
+                              autoOpen: false,
+                              title: "GetFeatureInfo"
+                            });
 
-                }
+                            $featuredialog.dialog("open");
+                       // }
+
+                // }
             //     var layerWater = 'http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Atasmania_water_bodies&STYLES&LAYERS=topp%3Atasmania_water_bodies&INFO_FORMAT=application%2Fjson&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX='+latlon+'';
             //     var layerroad = 'http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Atasmania_roads&STYLES&LAYERS=topp%3Atasmania_roads&INFO_FORMAT=application%2Fjson&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX='+latlon+'';
             //     fetch(layerWater)
