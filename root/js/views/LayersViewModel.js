@@ -19,6 +19,8 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
              * @param {Globe} globe The globe that provides the layer manager.
              * @constructor
              */
+             var flag=0;
+             var temp=1;
             function LayersViewModel(globe) {
                 var self = this,
                         layerManager = globe.layerManager;
@@ -49,6 +51,9 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                 self.onToggleLayer = function (layer) {
 					
                     layer.enabled(!layer.enabled());
+                    flag = layer.enabled();
+                    console.log("Success "+layer.opacity()+" "+flag);
+                    console.log(flag);
                     globe.redraw();
                 };
 				self.chag = function (data,event,layer)
@@ -58,12 +63,231 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
 					var layers = globe.wwd.layers,i, len;
               for (i = 0, len = layers.length; i < len; i++) 
 			  {
-                  if (layers[i].displayName === layerName) {
-                   layers[i].opacity = data.value;
-					 globe.redraw();
+                if (layers[i].displayName === layerName && flag==false){
+                    temp = layers[i].opacity;
+                    console.log("DISABLED");
+                    globe.redraw();
+                  }
+                  if (layers[i].displayName === layerName && flag==true) {
+                   layers[i].opacity = temp;
+                      globe.redraw();
+                      layers[i].opacity = data.value;
+                      console.log("ENABLED");
+                      console.log("Opacity: "+layers[i].opacity);
                  }
              }
 		};
+		
+		self.parxm = function (layerName,orgnam,crs,servadd,imgfr,prj,doc)
+				{
+					try{
+					var layn = layerName;
+					var xmd = doc;
+					var orgi = orgnam;
+					var srs = crs;
+					var add = servadd;
+					var imfo = imgfr;
+					var proj = prj;
+					var test,property,property1,i,h,text,key = 0,str=" ";
+					var result = [];
+					var prop = [];
+					var propv = [];
+					var serty = "WMS";
+					var users = xmd.getElementsByTagName("Layer");
+					for(var i = 0; i < users.length; i++) {
+					var user = users[i];
+					var names = user.getElementsByTagName("Title");
+					for(var j = 0; j < names.length; j++) {
+					if(names[j].childNodes[0].nodeValue === layn)
+					{
+						var abst = user.getElementsByTagName('Abstract')[0].lastChild.nodeValue;
+						var westb = user.getElementsByTagName('westBoundLongitude')[0].lastChild.nodeValue;
+						var eastb = user.getElementsByTagName('eastBoundLongitude')[0].lastChild.nodeValue;
+						var northb = user.getElementsByTagName('northBoundLatitude')[0].lastChild.nodeValue;
+						var southb = user.getElementsByTagName('southBoundLatitude')[0].lastChild.nodeValue;
+					}
+					}
+					}
+                var my_url = add+'SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image/png&TRANSPARENT=true&QUERY_LAYERS='+orgi+'&STYLES&LAYERS='+orgi+'&INFO_FORMAT=application/json&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG:4326&WIDTH=101&HEIGHT=101&BBOX='+westb+','+southb+','+eastb+','+northb;
+                fetch(my_url)
+                 .then(res => res.json())
+                .then((out) => {
+					try{
+                    if(out.crs == null){
+                       str = "Attribute list is not visible for this layer";
+                     }else{
+                        property = out.features[0].properties;
+						property1 = out.features[0].geometry.type;
+						h = 1;
+						for(var name in property)
+						{
+							 prop[i] = name;
+							 str = str.concat(h);
+							 str = str.concat(".");
+							 str = str.concat(prop[i]);
+							str = str.concat("\n");
+							h++;
+							//console.log(str);
+						}
+					 }
+					   
+                        var $featuredialog =  $("#feature")                    
+                        .html('Data Name : '+orgi+
+                            '<br>Data Name Alias(wms_title) : '+layn+
+							'<br>Feature Type : '+property1+
+                            '<br>Projection(wms_srs) : '+srs+
+                            '<br>Projection(coordsys_name) : '+proj+
+							'<br>Source Name : '+add+
+							'<br>Web Service Type : '+serty+
+							'<br>Imge Format Returned : '+imfo+
+							'<br>westBoundLongitude : '+westb+
+							'<br>northBoundLatitude : '+northb+
+							'<br>southBoundLatitude : '+southb+
+							'<br>eastBoundLongitude : '+eastb+
+							'<br>----------------------------------------------<br>Description : '+abst+
+							'<br>----------------------------------------------<br>Attributes : '+str
+							)
+                        .dialog({ 
+                             autoOpen: false,
+                              title: "MetaData",
+							  width: 500,
+							  height: 550
+                            }).parents(".ui-dialog").css("opacity","0.1");
+                             $featuredialog.dialog("open").prev(".ui-dialog-titlebar").css("background","grey");
+				}
+				catch(e)
+				{
+					var $featuredialog =  $("#feature")                    
+                        .html('Data Name : '+orgi+
+                            '<br>Data Name Alias(wms_title) : '+layn+
+							'<br>Feature Type : '+property1+
+                            '<br>Projection(wms_srs) : '+srs+
+                            '<br>Projection(coordsys_name) : '+proj+
+							'<br>Source Name : '+add+
+							'<br>Web Service Type : '+serty+
+							'<br>Imge Format Returned : '+imfo+
+							'<br>westBoundLongitude : '+westb+
+							'<br>northBoundLatitude : '+northb+
+							'<br>southBoundLatitude : '+southb+
+							'<br>eastBoundLongitude : '+eastb+
+							'<br>----------------------------------------------<br>Description : '+abst+
+							'<br>----------------------------------------------<br>Attributes : Layers not queryable'
+							)
+                        .dialog({ 
+                             autoOpen: false,
+                              title: "MetaData",
+							  width: 500,
+							  height: 550
+                            }).parents(".ui-dialog").css("opacity","0.1");
+                             $featuredialog.dialog("open").prev(".ui-dialog-titlebar").css("background","grey");
+				}
+				
+				})
+				.catch(function(err) {
+					var $featuredialog =  $("#feature")                    
+                        .html('Data Name : '+orgi+
+                            '<br>Data Name Alias(wms_title) : '+layn+
+							'<br>Feature Type : '+property1+
+                            '<br>Projection(wms_srs) : '+srs+
+                            '<br>Projection(coordsys_name) : '+proj+
+							'<br>Source Name : '+add+
+							'<br>Web Service Type : '+serty+
+							'<br>Imge Format Returned : '+imfo+
+							'<br>westBoundLongitude : '+westb+
+							'<br>northBoundLatitude : '+northb+
+							'<br>southBoundLatitude : '+southb+
+							'<br>eastBoundLongitude : '+eastb+
+							'<br>----------------------------------------------<br>Description : '+abst+
+							'<br>----------------------------------------------<br>Attributes : Layers not queryable'
+							)
+                        .dialog({ 
+                             autoOpen: false,
+                              title: "MetaData",
+							  width: 500,
+							  height: 550
+                            }).parents(".ui-dialog").css("opacity","0.1");
+                             $featuredialog.dialog("open").prev(".ui-dialog-titlebar").css("background","grey");
+					})
+				}
+				catch(e)
+				{
+					var $featuredialog =  $("#feature")                    
+                        .html('Data Name : '+orgi+
+                            '<br>Data Name Alias(wms_title) : '+layn+
+							'<br>Feature Type : '+property1+
+                            '<br>Projection(wms_srs) : '+srs+
+                            '<br>Projection(coordsys_name) : '+proj+
+							'<br>Source Name : '+add+
+							'<br>Web Service Type : '+serty+
+							'<br>Imge Format Returned : '+imfo+
+							'<br>westBoundLongitude : '+westb+
+							'<br>northBoundLatitude : '+northb+
+							'<br>southBoundLatitude : '+southb+
+							'<br>eastBoundLongitude : '+eastb+
+							'<br>----------------------------------------------<br>Description : '+abst+
+							'<br>----------------------------------------------<br>Attributes : Layers not queryable'
+							)
+                        .dialog({ 
+                             autoOpen: false,
+                              title: "MetaData",
+							  width: 500,
+							  height: 550
+                            }).parents(".ui-dialog").css("opacity","0.1");
+                             $featuredialog.dialog("open").prev(".ui-dialog-titlebar").css("background","grey");
+				}
+				
+				 
+		};
+		
+		
+		self.chd = function (data,event,layer)
+		{
+			try{
+				
+				var layerName = data.name();
+				var orgnam,crs,servadd,imgfr,prj,wmsCapsDoc;
+					var layers = globe.wwd.layers,i, len;
+              for (i = 0, len = layers.length; i < len; i++) 
+			  {
+                  if (layers[i].displayName === layerName) {
+				   orgnam = layers[i].urlBuilder.layerNames;
+				   crs = layers[i].urlBuilder.crs;
+					servadd = layers[i].urlBuilder.serviceAddress;
+				imgfr = layers[i].retrievalImageFormat;
+				prj = layers[i].lastGlobeStateKey;
+                 }
+             }
+				var asm;
+				asm = servadd+"SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
+				
+				var x = new XMLHttpRequest();
+				x.open("GET", asm, true);
+				x.onreadystatechange = function () {
+				if (x.readyState == 4 && x.status == 200)
+					{
+					var doc = x.responseXML;
+					
+					self.parxm(layerName,orgnam,crs,servadd,imgfr,prj,doc);
+					}
+					};
+					x.send(null);
+		}
+		catch(e)
+				{
+					var $featuredialog =  $("#feature")                    
+                        .html('This layer doesnot have any metadata. Layer doesnot belongs to WMS'
+							)
+                        .dialog({ 
+                             autoOpen: false,
+                              title: "MetaData",
+							  width: 500,
+							  height: 550
+                            });
+                             $featuredialog.dialog("open").prev(".ui-dialog-titlebar").css("background","grey");
+				}
+		};
+				
+		
 
                 /**
                  * Opens a dialog to edit the layer settings.

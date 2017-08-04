@@ -13,16 +13,20 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
              * @param {Globe} globe The globe that provides the layer manager.
              * @constructor
 			 **/
+             var flag = true;
+             var temp = 1;
 			 function ViewsViewModel(globe) {
                 var self = this,
                         layerManager = globe.layerManager;
-
+				
                 // Create view data sources from the LayerManager's observable array
                 self.effectsLayers = layerManager.effectsLayers;
                 self.widgetLayers = layerManager.widgetLayers;
 				self.onToggleLayer = function (layer) {
-					//console.log(layer.name());
+					console.log("TOPP"+layer.name());
                     layer.enabled(!layer.enabled());
+                    flag = layer.enabled();
+                    console.log("Success "+flag);
                     globe.redraw();
                 };
 				self.chag = function (data,event,layer)
@@ -32,13 +36,25 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
 					var layers = globe.wwd.layers,i, len;
               for (i = 0, len = layers.length; i < len; i++) 
 			  {
-                  if (layers[i].displayName === layerName) {
-                   layers[i].opacity = data.value;
-					 globe.redraw();
-                 }
+                  if (layers[i].displayName === layerName && flag==false){
+                    temp = layers[i].opacity;
+                    console.log("DISABLED");
+                    globe.redraw();
+                  }
+                   else if (layers[i].displayName === layerName && flag==true) {
+                      layers[i].opacity = temp;
+                      $('#opacity-slider').val(temp);
+                      globe.redraw();
+                      layers[i].opacity = data.value;
+                      console.log("ENABLED");
+                      console.log("Opacity: "+layers[i].opacity);
+					  //globe.redraw();
+                  }
              }
 		};
-				self.onEditSettings = function (layer) {
+		
+				self.onEditSettings = function (layer) 
+					{
                     
                     $('#opacity-slider').slider({
                         animate: 'fast',
@@ -57,7 +73,7 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                         title: layer.name()
                     });
                     
-                    //console.log(layer.name() + ":  " + layer.opacity());
+                    console.log("NEW FUNC"+layer.name() + ":  " + layer.opacity());
                     $("#opacity-slider").slider("option", "value", layer.opacity());
                     $("#layer-settings-dialog").dialog("open");
                 };
