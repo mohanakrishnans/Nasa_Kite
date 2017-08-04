@@ -203,20 +203,6 @@ Main Content
             </div>
             <div id="layers-body" class="section-body collapse in">
                 <!--TODO: This entire section could be driven by an observable array-->
-                <div class="panel panel-default" data-bind="sortable: overlay1Layers">
-                    <div class="panel-heading">
-                        <h5 class="panel-title">
-                        State Spatial Data
-                            <a data-toggle="collapse" class="as" href="#overlay1-layers-panel" aria-expanded="false"
-                               aria-controls="overlay1-layers-panel">
-                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Overlays"></span></small>
-                            </a>
-                        </h5>
-                    </div>
-                    <div class="panel-collapse collapse in" id="overlay1-layers-panel">
-                        <div data-bind="template: { name: 'layer-template', foreach: overlay1Layers}"></div>
-                    </div>
-                </div>
 				<div class="panel panel-default" data-bind="sortable: overlay1Layers">
                     <div class="panel-heading">
                         <h5 class="panel-title">
@@ -228,7 +214,7 @@ Main Content
                         </h5>
                     </div>
                     <div class="panel-collapse collapse in" id="overlay1-layers-panel">
-                        <div data-bind="template: { name: 'layer-template', foreach: overlay1Layers}"></div>
+                        <div data-bind="template: { name: 'metadata-layer-template', foreach: overlay1Layers}"></div>
                     </div>
                 </div>
 				<div class="panel panel-default" data-bind="sortable: overlayLayers">
@@ -242,7 +228,7 @@ Main Content
                         </h5>
                     </div>
                     <div class="panel-collapse collapse in" id="overlay-layers-panel">
-                        <div data-bind="template: { name: 'layer-template', foreach: overlayLayers}"></div>
+                        <div data-bind="template: { name: 'metadata-layer-template', foreach: overlayLayers}"></div>
                     </div>
                 </div>
 				
@@ -360,6 +346,17 @@ Main Content
                     View and Controls
                     <a class="section-toggle" data-toggle="collapse" href="#views-body"></a>
                 </h4>
+				<!--<div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                        <a id="tog" class="btn btn-default" style="display: block; width: 100%;">
+                                <i class="glyphicon glyphicon-eye-open"></i>
+                                <span>Logos</span>
+                                
+                        </a>
+                        </h5>
+                    </div>
+                </div> -->
 				<div class="panel panel-default">
                     <div class="panel-heading">
                         <h5 class="panel-title">
@@ -410,7 +407,7 @@ Main Content
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h5 class="panel-title">
-						Widgets
+						Heads-up Controls
                             <a data-toggle="collapse" class="as" href="#widget-layers-panel" aria-expanded="false"
                                aria-controls="widget-layers-panel">
                                <small><span class="pull-right glyphicon glyphicon-minus" title="Collpase in/out Widgets"></span></small> 
@@ -603,7 +600,7 @@ Marker Editor Dialog
 Layer Template
 This script renders the individual layer view model items in the Layers panel.
 -->
-<script type="text/html" id="layer-template">
+<script type="text/html" id="metadata-layer-template">
     <div class="btn-group btn-block">
         <!--Layer name and visibility button-->
         <button type="button"
@@ -613,7 +610,7 @@ This script renders the individual layer view model items in the Layers panel.
                 <span>
                     <input class="pull-left" type="checkbox" data-bind="'checked': $data.enabled()">
                 </span>
-            <span class="layer" data-bind="text: $data.name()"></span>
+            <span class="layer" style="float:left;padding-left:5px" data-bind="text: $data.name()"></span>
         </button>
         <!--Display legend button-->
         <button type="button"
@@ -621,9 +618,10 @@ This script renders the individual layer view model items in the Layers panel.
                 style="display: block; width: 20%;"
                 data-toggle="collapse"
                 data-bind="css: {active: $data.enabled(), in: $data.enabled()},
-                        attr: {'data-target': '#collapse-layer-' + $data.id(),
+                            attr: {
+                        'data-target': '#collapse-layer-' + $data.id(),
                         'aria-controls': 'collapse-layer-' + $data.id(),
-                        'aria-expanded': $data.enabled() ? 'true' : 'false'},enable: $data.enabled()">
+                        'aria-expanded': $data.enabled() ? 'true' : 'false'}">
             <span class="glyphicon glyphicon-plus"></span>
         </button>
         <!--Settings button
@@ -645,7 +643,61 @@ This script renders the individual layer view model items in the Layers panel.
 				&nbsp;
 				<input class="layer" data-bind="attr: {id: ''+$data.name(), min: 0, max: 1, step: 0.2, value: 0.8},css: {active: $data.enabled()}, value: $data.value, event:{change: $root.chag}, text: $data.name()" type="range">
 				<!-- <input type="range" data-bind="event:{change: $root.funcA}"> -->
+				<div>
+				<span class="pull-left met clickable_space" style="color:MediumPurple;" data-bind="attr: {id: ''+$data.name()}, event:{click: $root.chd}" title="Metadata Link"><u>Metadata</u></span>
 			</div>
+			</div>
+        </div>
+    </div>
+
+</script>
+<script type="text/html" id="layer-template">
+    <div class="btn-group btn-block">
+        <!--Layer name and visibility button-->
+        <button type="button"
+                class="btn btn-default layer-name wrap-panel-heading"
+                style="display: block; width: 80%;"
+                data-bind="click: $root.onToggleLayer, css: {active: $data.enabled()}">
+                <span>
+                    <input class="pull-left" type="checkbox" data-bind="'checked': $data.enabled()">
+                </span>
+            <span class="layer" style="float:left;padding-left:5px" data-bind="text: $data.name()"></span>
+        </button>
+        <!--Display legend button-->
+        <button type="button"
+                class="toggle btn btn-default collapse"
+                style="display: block; width: 20%;"
+                data-toggle="collapse"
+                data-bind="css: {active: $data.enabled(), in: $data.enabled()},
+                            attr: {
+                        'data-target': '#collapse-layer-' + $data.id(),
+                        'aria-controls': 'collapse-layer-' + $data.id(),
+                        'aria-expanded': $data.enabled() ? 'true' : 'false'}">
+            <span class="glyphicon glyphicon-plus"></span>
+        </button>
+        <!--Settings button
+        <button type="button"
+                class="btn btn-default"
+                style="display: block; width: 15%;"
+                data-bind="css: {active: $data.enabled()}, click: $root.onEditSettings">
+            <span class="glyphicon glyphicon-cog"></span>
+        </button> -->
+    </div>
+    <div class="collapse" data-bind="attr: {id: 'collapse-layer-' + $data.id()}">
+        <div class="well">
+            <!--Controls and Legend-->
+            <div>
+                <img data-bind="attr: {src: legendUrl}"/>
+            </div>
+            <div>
+                Opacity :
+                &nbsp;
+                <input class="layer" data-bind="attr: {id: ''+$data.name(), min: 0, max: 1, step: 0.2, value: 0.8},css: {active: $data.enabled()}, value: $data.value, event:{change: $root.chag}, text: $data.name()" type="range">
+                <!-- <input type="range" data-bind="event:{change: $root.funcA}"> -->
+               <!--  <div>
+                <span class="pull-left met clickable_space" style="color:MediumPurple;" data-bind="attr: {id: ''+$data.name()}, event:{click: $root.chd}" title="Metadata Link"><u>Metadata</u></span>
+            </div> -->
+            </div>
         </div>
     </div>
 
@@ -735,7 +787,7 @@ This server-template script renders a server's tab content
         <div class="panel-collapse collapse" role="tabpanel"
              data-bind="attr: {id:'server-layers-' + $data.id, 'aria-labelledby': 'server-panel-' + $index()}">
 		<a href="#">
-                    <small><span class="pull-right glyphicon glyphicon-remove clickable_space" title="Remove Server"></span></small>
+                    <small><span class="pull-right rem clickable_space" style="color:MediumPurple;" title="Remove Server"><u>Remove</u></span></small>
                 </a>
             <!-- ko template: { name: 'server-layer-template', foreach: layers } -->
             <!-- /ko -->
@@ -748,168 +800,14 @@ This server-template script renders a server's tab content
          
     </div>
 </div>
-
 <script>
-// $("#canvasOne").click(function() {
-//   opendialog("http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX=-104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625");
-// });
-// var url="http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX=-104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625";
-// function opendialog(url) {
-//   var $dialog = $('#canvasOne')
-//   .html('<iframe style="border: 0px; " src="http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX=-104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625" width="100%" height="100%"></iframe>')
-//   .dialog({
-//     title: "Page",
-//     autoOpen: false,
-//     dialogClass: 'dialog_fixed,ui-widget-header',
-//     modal: true,
-//     height: 500,
-//     minWidth: 400,
-//     minHeight: 400,
-//     draggable:true,
-//     /*close: function () { $(this).remove(); },*/
-//     buttons: { "Ok": function () {         $(this).dialog("close"); } }
-//   });
-//   $dialog.dialog('open');
-// } 
-
-
-// $("#canvasOne").click(function () {
-//     var $featuredialog =  $("#feature").html('<iframe style="border: 0px; " src="http://localhost:8080/geoserver/topp/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=topp%3Astates&STYLES&LAYERS=topp%3Astates&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A4326&WIDTH=101&HEIGHT=101&BBOX=-104.1943359375%2C33.5302734375%2C-95.3173828125%2C42.4072265625" width="100%" height="100%"></iframe>').dialog({ 
-//               autoOpen: false,
-//               title: "GetFeatureInfo"
-//             });
-//         $featuredialog.dialog("open");
- 
-
-// });
-
-
-
- 
-
-
-
-
-
-// document.getElementById('canvasOne').addEventListener('click', function(evt) {
-//     console.logo("111");
-
-//     function(tile, imageFormat) {
-//         if (!tile) {
-//             throw new ArgumentError(
-//                 Logger.logMessage(Logger.LEVEL_SEVERE, "WmsUrlBuilder", "urlForTile", "missingTile"));
-//         }
-
-//         if (!imageFormat) {
-//             throw new ArgumentError(
-//                 Logger.logMessage(Logger.LEVEL_SEVERE, "WmsUrlBuilder", "urlForTile",
-//                     "The image format is null or undefined."));
-//         }
-
-//         var sector = tile.sector;
-
-//         var sb = WmsUrlBuilder.fixGetMapString(this.serviceAddress);
-
-//         if (sb.search(/service=wms/i) < 0) {
-//             sb = sb + "service=WMS";
-//         }
-
-//         sb = sb + "&request=GetFeatureInfo";
-//         sb = sb + "&version=" + this.wmsVersion;
-//         sb = sb + "&transparent=" + (this.transparent ? "TRUE" : "FALSE");
-//         sb = sb + "&layers=" + this.layerNames;
-//         sb = sb + "&styles=" + this.styleNames;
-//         sb = sb + "&format=" + imageFormat;
-//         //sb = sb + "&width=" + tile.tileWidth;
-//         //sb = sb + "&height=" + tile.tileHeight;
-
-//         // if (this.timeString) {
-//         //     sb = sb + "&time=" + this.timeString;
-//         // }
-//         console.log("112");
-
-//         size = this._map.getSize();
-//         var point = layer._map.latLngToContainerPoint(event.latlng, layer._map.getZoom());
-//         var temp = this.wmsParams.layers;
-//         var temp1 = temp.split(":");
-
-//         sb = sb + "&QUERY_LAYERS=" + temp1[1];
-//         sb = sb + "&info_format=text%2html";
-//         sb = sb + "&feature_count=50";
-//         sb = sb + "&x=50";
-//         sb = sb + "&y=50";
-//         sb = sb + "&srs=" + this.srs;
-//         sb = sb + "&width=101";
-//         sb = sb + "&height=101";
-//         sb = sb + "&bbox=" + this._map.getBounds().toBBoxString();
-
-
-
-//         // if (this.isWms130OrGreater) {
-//         //     sb = sb + "&crs=" + this.crs;
-//         //     sb = sb + "&bbox=";
-//         //     if (this.crs === "CRS:84") {
-//         //         sb = sb + sector.minLongitude + "," + sector.minLatitude + ",";
-//         //         sb = sb + sector.maxLongitude+ "," + sector.maxLatitude;
-//         //     } else {
-//         //         sb = sb + sector.minLatitude + "," + sector.minLongitude + ",";
-//         //         sb = sb + sector.maxLatitude+ "," + sector.maxLongitude;
-//         //     }
-//         // } else {
-//         //     sb = sb + "&srs=" + this.crs;
-//         //     sb = sb + "&bbox=";
-//         //     sb = sb + sector.minLongitude + "," + sector.minLatitude + ",";
-//         //     sb = sb + sector.maxLongitude+ "," + sector.maxLatitude;
-//         // }
-
-//         sb = sb.replace(" ", "%20");
-//         $(function() {
-//             $("<p>Mohan</p>").dialog();
-//         });
-//         return sb;
-//     };
-//     console.log("113");
-// }, false);
-
-
-// document.addEventListener("DOMContentLoaded", init, false);
-
-// function init() {
-//     var canvas = document.getElementById("canvasOne");
-//     canvas.addEventListener("mousedown", getPosition, false);
-// }
-
-// function getPosition(event) {
-//     var x = new Number();
-//     var y = new Number();
-//     var canvas = document.getElementById("canvasOne");
-
-//     if (event.x != undefined && event.y != undefined) {
-//         x = event.x;
-//         y = event.y;
-//     } else // Firefox method to get the position
-//     {
-//         x = event.clientX + document.body.scrollLeft +
-//             document.documentElement.scrollLeft;
-//         y = event.clientY + document.body.scrollTop +
-//             document.documentElement.scrollTop;
-//     }
-
-//     x -= canvas.offsetLeft;
-//     y -= canvas.offsetTop;
-
-//     alert("x: " + x + "  y: " + y);
-// }
-
-
-
-    $(document).on('click','.glyphicon-remove', function(){
+    $(document).on('click','.rem', function(){
 
         $(this).parents('.panel').get(0).remove();
     });
 	$(document).ready(function()
 	{  
-        $("#btn_Springfield").prop("checked", true);
+		$("#btn_Springfield").prop("checked", true);
         $("#btn_Nasa").prop("checked", true);
         $("#btn_Kite").prop("checked", true);
 
@@ -946,8 +844,8 @@ This server-template script renders a server's tab content
             }
 
         });
-
-    $('#icon_Springfield').click(function(){
+		
+		$('#icon_Springfield').click(function(){
        $("#logo1").toggle();
        if($("#btn_Springfield").is(":checked"))  
             $("#btn_Springfield").prop("checked", false);  
@@ -1063,5 +961,8 @@ main.js
         color: #000000 !important;
         background: #FFFFFF;
     !important;
+    }
+    .ui-dialog { 
+        position: relative;        
     }
 </style>

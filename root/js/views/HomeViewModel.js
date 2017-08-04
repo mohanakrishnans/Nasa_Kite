@@ -27,7 +27,7 @@ define(['knockout',
             this.timeZoneDetectEnabled = globe.timeZoneDetectEnabled;
             this.use24Time = globe.use24Time;
             this.servers = layerManager.servers;
-            self.serverAddress = ko.observable("http://199.79.36.156/cgi-bin/mapserv?map=WorldWind.map&");
+            self.serverAddress = ko.observable("http://geospatial.springfield-or.gov/cgi-bin/mapserv?map=WorldWind.map&");
             self.onAddServer  = function() {
                 layerManager.addServer(self.serverAddress());
                 return true;
@@ -45,21 +45,9 @@ define(['knockout',
                 return true;
 
             };
-            layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=BASE_WMS.map&");
-			layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=FAC_WMS.map&");
-            //
-            layerManager.addServer("http://giswebservices.massgis.state.ma.us/geoserver/wms?");
-            layerManager.addServer("http://localhost:8080/geoserver/Mohan/wms?");
-            layerManager.addServer("http://localhost:8080/geoserver/topp/wms?");
-            
-            //
-			layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=LAND_MGT_WMS.map&");
-			layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=ES_WMS.map&");
-			layerManager.addServer("http://199.79.36.156/cgi-bin/mapserv?map=ENVIRON_WMS.map&");
-            //http://giswebservices.massgis.state.ma.us/geoserver/wms? http://localhost:8080/geoserver/topp/wms?
-            //http://localhost:8080/geoserver/Mohan/wms?
-			
-			
+            //layerManager.addServer("http://10.9.3.238:8080/geoserver/BASE_WMS/wms?");
+			//layerManager.addServer("http://10.9.3.238:8080/geoserver/FAC_WMS/wms?");
+            layerManager.addServer("http://127.0.0.1:8080/geoserver/topp/wms?");
         }
 
         return HomeViewModel;

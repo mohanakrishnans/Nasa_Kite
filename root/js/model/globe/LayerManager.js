@@ -28,10 +28,11 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
             var self = this;
 
             this.globe = globe;
-
+				
+				
             /** Background layers are always enabled and are not shown in the layer menu. */
             this.backgroundLayers = ko.observableArray();
-
+			
             /** Base layers are opaque and should be shown exclusive of other base layers. */
             this.baseLayers = ko.observableArray();
 
@@ -68,8 +69,9 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
 
                 self.globe.redraw();
             };
+			
         };
-
+				
         /**
          * Background layers are always enabled and are not shown in the layer menu.
          * @param {WorldWind.Layer} layer
@@ -501,7 +503,7 @@ define(['knockout', 'model/Config', 'model/Constants', 'worldwind'],
                     this.addBaseLayer(layer);
                 } else if (category === constants.LAYER_CATEGORY_OVERLAY) {
 					//console.log(layer.legendUrl.url);
-					if(layer.legendUrl.url.includes("199.79.36.156"))
+					if(layer.legendUrl.url.includes("10.9.3.238"))
 					{
                     this.addOverlayLayer(layer);
 					}

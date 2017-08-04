@@ -81,7 +81,6 @@ require(['knockout', 'jquery', 'bootstrap', 'split', 'worldwind',
 
         // Define the configuration for the primary globe
         var globeOptions = {
-                mouseClick:true,
                 showBackground: true,
                 showReticule: true,
                 showViewControls: true,
@@ -137,36 +136,6 @@ require(['knockout', 'jquery', 'bootstrap', 'split', 'worldwind',
             }
         });
 		
-        //var wwd = new WorldWind.WorldWindow("canvasOne");
-        // wwd.addEventListener("mousemove", function (event) {...});
-
-        // var clickRecognizer = new WorldWind.ClickRecognizer(globe, 
-        //     function(recognizer) {
-        //         alert("MOHAN ...:'");
-        // });
-        // var handleClick = function (recognizer) {
-        //     // Obtain the event location.
-        //     // var x = recognizer.clientX,
-        //     //     y = recognizer.clientY;
-
-        //     // // Perform the pick. Must first convert from window coordinates to canvas coordinates, which are
-        //     // // relative to the upper left corner of the canvas rather than the upper left corner of the page.
-        //     // var pickList = wwd.pick(wwd.canvasCoordinates(x, y));
-
-        //     // // If only one thing is picked and it is the terrain, tell the world window to go to the picked location.
-        //     // if (pickList.objects.length == 1 && pickList.objects[0].isTerrain) {
-        //     //     var position = pickList.objects[0].position;
-        //     //     wwd.goTo(new WorldWind.Location(position.latitude, position.longitude));
-        //     // }
-        //     alert("111111");
-        // };
-
-        // Listen for mouse clicks.
-       // var clickRecognizer = new WorldWind.ClickRecognizer(globe, handleClick);
-
-        // $('#canvasOne').click(function () {
-        //     alert("1111");
-        // });
 		
         // Auto-collapse navbar when its tab items are clicked
         $('.navbar-collapse a[role="tab"]').click(function () {

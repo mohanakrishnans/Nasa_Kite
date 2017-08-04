@@ -16,7 +16,7 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
 			 function ViewsViewModel(globe) {
                 var self = this,
                         layerManager = globe.layerManager;
-
+				
                 // Create view data sources from the LayerManager's observable array
                 self.effectsLayers = layerManager.effectsLayers;
                 self.widgetLayers = layerManager.widgetLayers;
@@ -38,7 +38,9 @@ define(['knockout', 'jquery', 'jqueryui', 'bootstrap', 'model/Constants'],
                  }
              }
 		};
-				self.onEditSettings = function (layer) {
+		
+				self.onEditSettings = function (layer) 
+					{
                     
                     $('#opacity-slider').slider({
                         animate: 'fast',
